@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Alert, AppState } from 'react-native';
+import { View, Text, Alert, AppState, StyleSheet } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function AuthScreen({ navigation }) {
@@ -28,7 +28,17 @@ export default function AuthScreen({ navigation }) {
       if (result.success) {
         navigation.replace('Home');
       } else {
-        authenticate();
+        Alert.alert(
+          'Erro',
+          'Autenticação cancelada. É necessário autenticar-se.',
+          [
+            {
+              text: 'OK',
+              onPress: () => authenticate(),
+            },
+          ],
+          { cancelable: false }
+        );
       }
     } catch (error) {
       console.error('Erro durante a autenticação:', error);
@@ -37,8 +47,21 @@ export default function AuthScreen({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Aguardando Autenticação...</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>Aguardando Autenticação...</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#293A97', // Cor de fundo
+  },
+  text: {
+    color: '#C8D4F1', // Cor das letras
+    fontSize: 18
+  },
+});
