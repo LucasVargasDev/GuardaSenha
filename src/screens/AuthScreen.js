@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Alert, AppState, StyleSheet } from 'react-native';
+import { View, Text, Alert, AppState, StyleSheet, Platform  } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function AuthScreen({ navigation }) {
@@ -8,6 +8,12 @@ export default function AuthScreen({ navigation }) {
   }, []);
 
   const authenticate = async () => {
+
+    if(Platform.OS == "web") {
+      navigation.replace('Home');
+      return;
+    }
+
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
     const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
