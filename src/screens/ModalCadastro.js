@@ -226,26 +226,24 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    position: 'absolute',
-    bottom: 70, // Distância do botão salvar
-    right: 10,
+    marginTop: 10, // Espaço acima do botão
+    alignSelf: 'flex-end', // Alinha o botão à direita
     flexDirection: 'row',
     alignItems: 'center',
   },
   gerarSenhaText: {
     color: 'white',
     marginLeft: 5, // Espaço entre o ícone e o texto
-    fontSize: 16,
   },
   saveButton: {
-    backgroundColor: '#293A97',
+    backgroundColor: '#007BFF',
     paddingVertical: 10,
     borderRadius: 5,
-    alignItems: 'center',
+    marginTop: 20,
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 16,
+    textAlign: 'center',
   },
   popupOverlay: {
     flex: 1,
@@ -255,27 +253,24 @@ const styles = StyleSheet.create({
   },
   popupContainer: {
     backgroundColor: 'white',
-    borderRadius: 10,
     padding: 20,
-    width: '80%',
+    borderRadius: 10,
+    alignItems: 'center',
   },
   popupText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   popupInfo: {
-    marginBottom: 10,
+    marginVertical: 5,
   },
   closeButton: {
-    backgroundColor: '#293A97',
-    paddingVertical: 10,
+    backgroundColor: '#007BFF',
+    padding: 10,
     borderRadius: 5,
-    alignItems: 'center',
     marginTop: 10,
   },
   closeButtonText: {
     color: 'white',
-    fontSize: 16,
   },
 });
