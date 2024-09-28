@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
+import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
 
 export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly }) {
   const [sistema, setSistema] = useState('');
@@ -69,13 +70,24 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     setPopupVisible(false);
   };
 
+  const gerarSenhaSegura = () => {
+    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    let novaSenha = '';
+    for (let i = 0; i < 12; i++) { // Gerar senha de 12 caracteres
+      const indice = Math.floor(Math.random() * caracteres.length);
+      novaSenha += caracteres[indice];
+    }
+    setSenha(novaSenha);
+    validarSenha(novaSenha); // Validar a nova senha gerada
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
 
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => {onClose(); resetInputs();}}>
+            <TouchableOpacity onPress={() => { onClose(); resetInputs(); }}>
               <MaterialIcons name="arrow-back" size={24} color="#C8D4F1" />
             </TouchableOpacity>
             <Text style={styles.headerText}>{viewOnly ? 'Visualizar' : selectedLogin ? 'Editar' : 'Adicionar'} Login</Text>
@@ -113,6 +125,11 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                 onPress={handleIconPress}
               />
             </View>
+
+            <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
+              <FontAwesome name="key" size={18} color="white" />
+              <Text style={styles.gerarSenhaText}>Gerar</Text> {/* Texto "Gerar" adicionado */}
+            </TouchableOpacity>
 
             {!viewOnly && (
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -204,17 +221,31 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
   },
+  gerarSenhaButton: {
+    backgroundColor: '#2E8B57', // Verde escuro
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    position: 'absolute',
+    bottom: 70, // Distância do botão salvar
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gerarSenhaText: {
+    color: 'white',
+    marginLeft: 5, // Espaço entre o ícone e o texto
+    fontSize: 16,
+  },
   saveButton: {
     backgroundColor: '#293A97',
-    paddingVertical: 15,
+    paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
   },
   popupOverlay: {
     flex: 1,
@@ -223,11 +254,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   popupContainer: {
-    width: '80%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
-    alignItems: 'center',
+    width: '80%',
   },
   popupText: {
     fontSize: 18,
@@ -235,15 +265,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   popupInfo: {
-    fontSize: 16,
     marginBottom: 10,
-    textAlign: 'left',
   },
   closeButton: {
     backgroundColor: '#293A97',
     paddingVertical: 10,
-    paddingHorizontal: 20,
     borderRadius: 5,
+    alignItems: 'center',
     marginTop: 10,
   },
   closeButtonText: {
