@@ -71,12 +71,29 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   };
 
   const gerarSenhaSegura = () => {
-    const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    const letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz';
+    const numeros = '0123456789';
+    const caracteresEspeciais = '!@#$%^&*';
+    
+    // Garantindo que a senha tenha pelo menos uma letra maiúscula, um número e um caractere especial
     let novaSenha = '';
-    for (let i = 0; i < 12; i++) { // Gerar senha de 12 caracteres
-      const indice = Math.floor(Math.random() * caracteres.length);
-      novaSenha += caracteres[indice];
+    novaSenha += letrasMaiusculas[Math.floor(Math.random() * letrasMaiusculas.length)];
+    novaSenha += numeros[Math.floor(Math.random() * numeros.length)];
+    novaSenha += caracteresEspeciais[Math.floor(Math.random() * caracteresEspeciais.length)];
+    
+    // Gerando o restante da senha para ter entre 6 a 8 caracteres
+    const todosOsCaracteres = letrasMaiusculas + letrasMinusculas + numeros + caracteresEspeciais;
+    const tamanhoRestante = Math.floor(Math.random() * 3) + 3; // Para que a senha total tenha entre 6 e 8 caracteres
+  
+    for (let i = 0; i < tamanhoRestante; i++) {
+      const indice = Math.floor(Math.random() * todosOsCaracteres.length);
+      novaSenha += todosOsCaracteres[indice];
     }
+  
+    // Embaralhando a senha para que os caracteres obrigatórios não fiquem em posições fixas
+    novaSenha = novaSenha.split('').sort(() => 0.5 - Math.random()).join('');
+  
     setSenha(novaSenha);
     validarSenha(novaSenha); // Validar a nova senha gerada
   };
@@ -117,6 +134,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                 onChangeText={handleSenhaChange}
                 editable={!viewOnly}
               />
+
               <Octicons
                 name={senhaSegura.icon}
                 size={24}
@@ -126,10 +144,12 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
               />
             </View>
 
-            <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
-              <FontAwesome name="key" size={18} color="white" />
-              <Text style={styles.gerarSenhaText}>Gerar</Text> {/* Texto "Gerar" adicionado */}
-            </TouchableOpacity>
+            {!selectedLogin && (
+              <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
+                <FontAwesome name="key" size={18} color="white" />
+                <Text style={styles.gerarSenhaText}>Gerar</Text> {/* Texto "Gerar" adicionado */}
+              </TouchableOpacity>)}
+
 
             {!viewOnly && (
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
