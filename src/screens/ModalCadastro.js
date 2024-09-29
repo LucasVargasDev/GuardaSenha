@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
 import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
@@ -98,88 +98,97 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     validarSenha(novaSenha); // Validar a nova senha gerada
   };
 
+  const handleBackdropPress = () => {
+    onClose(); 
+    resetInputs(); 
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContainer}>
+      <TouchableWithoutFeedback onPress={handleBackdropPress}>
+        <View style={styles.modalOverlay}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.modalContainer}>
   
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => { onClose(); resetInputs(); }}>
-              <MaterialIcons name="arrow-back" size={24} color="#C8D4F1" />
-            </TouchableOpacity>
-            <Text style={styles.headerText}>{viewOnly ? 'Visualizar' : selectedLogin ? 'Editar' : 'Adicionar'} Conta</Text>
-          </View>
-  
-          <View style={styles.modalContent}>
-            <TextInput
-              style={styles.input}
-              placeholder="Sistema"
-              value={sistema}
-              onChangeText={setSistema}
-              editable={!viewOnly}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Login"
-              value={login}
-              onChangeText={setLogin}
-              editable={!viewOnly}
-            />
-
-            <View style={styles.senhaContainer}>
-              <TextInput
-                style={styles.inputSenha}
-                placeholder="Senha"
-                value={senha}
-                onChangeText={handleSenhaChange}
-                editable={!viewOnly}
-              />
-              <Octicons
-                name={senhaSegura.icon}
-                size={20} // Ajuste o tamanho conforme necessário
-                color={senhaSegura.color}
-                style={styles.iconeSenha}
-                onPress={handleIconPress}
-              />
-            </View>
-  
-            {!selectedLogin && (
-              <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
-                <FontAwesome name="key" size={18} color="white" />
-                <Text style={styles.gerarSenhaText}>Gerar</Text>
-              </TouchableOpacity>
-            )}
-  
-            {!viewOnly && (
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Salvar</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-  
-        {popupVisible && (
-          <Modal transparent={true} visible={popupVisible} animationType="fade">
-            <View style={styles.popupOverlay}>
-              <View style={styles.popupContainer}>
-                <Text style={styles.popupText}>Segurança da Senha</Text>
-                <Text style={styles.popupInfo}>
-                  <Octicons name="shield-check" size={16} color="green" /> Verde: Senha segura (mín. 6 caracteres, 1 maiúscula, 1 número, 1 especial)
-                </Text>
-                <Text style={styles.popupInfo}>
-                  <Octicons name="shield" size={16} color="#d4a017" /> Amarelo: Parcialmente segura (mín. 6 caracteres, 1 maiúscula, 1 número)
-                </Text>
-                <Text style={styles.popupInfo}>
-                  <Octicons name="shield-x" size={16} color="red" /> Vermelho: Não segura (não atende aos requisitos mínimos acima)
-                </Text>
-                <TouchableOpacity style={styles.closeButton} onPress={closePopup}>
-                  <Text style={styles.closeButtonText}>Fechar</Text>
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => { onClose(); resetInputs(); }}>
+                  <MaterialIcons name="arrow-back" size={24} color="#C8D4F1" />
                 </TouchableOpacity>
+                <Text style={styles.headerText}>{viewOnly ? 'Visualizar' : selectedLogin ? 'Editar' : 'Adicionar'} Conta</Text>
+              </View>
+  
+              <View style={styles.modalContent}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Sistema"
+                  value={sistema}
+                  onChangeText={setSistema}
+                  editable={!viewOnly}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Login"
+                  value={login}
+                  onChangeText={setLogin}
+                  editable={!viewOnly}
+                />
+
+                <View style={styles.senhaContainer}>
+                  <TextInput
+                    style={styles.inputSenha}
+                    placeholder="Senha"
+                    value={senha}
+                    onChangeText={handleSenhaChange}
+                    editable={!viewOnly}
+                  />
+                  <Octicons
+                    name={senhaSegura.icon}
+                    size={20} // Ajuste o tamanho conforme necessário
+                    color={senhaSegura.color}
+                    style={styles.iconeSenha}
+                    onPress={handleIconPress}
+                  />
+                </View>
+  
+                {!selectedLogin && (
+                  <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
+                    <FontAwesome name="key" size={18} color="white" />
+                    <Text style={styles.gerarSenhaText}>Gerar</Text>
+                  </TouchableOpacity>
+                )}
+  
+                {!viewOnly && (
+                  <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+                    <Text style={styles.saveButtonText}>Salvar</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
-          </Modal>
-        )}
-      </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+  
+      {popupVisible && (
+        <Modal transparent={true} visible={popupVisible} animationType="fade">
+          <View style={styles.popupOverlay}>
+            <View style={styles.popupContainer}>
+              <Text style={styles.popupText}>Segurança da Senha</Text>
+              <Text style={styles.popupInfo}>
+                <Octicons name="shield-check" size={16} color="green" /> Verde: Senha segura (mín. 6 caracteres, 1 maiúscula, 1 número, 1 especial)
+              </Text>
+              <Text style={styles.popupInfo}>
+                <Octicons name="shield" size={16} color="#d4a017" /> Amarelo: Parcialmente segura (mín. 6 caracteres, 1 maiúscula, 1 número)
+              </Text>
+              <Text style={styles.popupInfo}>
+                <Octicons name="shield-x" size={16} color="red" /> Vermelho: Não segura (não atende aos requisitos mínimos acima)
+              </Text>
+              <TouchableOpacity style={styles.closeButton} onPress={closePopup}>
+                <Text style={styles.closeButtonText}>Fechar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
     </Modal>
   );
 }
