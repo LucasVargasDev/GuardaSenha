@@ -132,7 +132,6 @@ export default function HomeScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,10 +152,22 @@ const styles = StyleSheet.create({
   loginContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 20, // Ajusta o padding vertical
+    paddingVertical: 15, // Ajusta o padding vertical
     paddingHorizontal: 15, // Adiciona padding horizontal para mover tudo para a esquerda
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    backgroundColor: '#fff', // Cor de fundo branca
+    borderRadius: 0, // Bordas arredondadas
+    marginTop: 2,
+    marginBottom: 5, // Espaço entre os itens
+    shadowColor: '#000', // Cor da sombra
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2, // Opacidade da sombra
+    shadowRadius: 4, // Raio da sombra
+    elevation: 5, // Para Android
   },
   iconContainer: {
     flexDirection: 'row',
@@ -200,10 +211,17 @@ const styles = StyleSheet.create({
     bottom: 20,
     right: 20,
     backgroundColor: '#293A97',
-    width: 60,
+    width: 'auto', // Ajuste para auto
     height: 60,
-    borderRadius: 30,
+    borderRadius: 20,
+    flexDirection: 'row', // Para alinhar texto e ícone
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 15, // Adiciona espaço ao redor do conteúdo
+  },
+  buttonText: {
+    color: 'white',
+    marginLeft: 10, // Espaço entre o ícone e o texto
+    fontSize: 16,
   },
 });
