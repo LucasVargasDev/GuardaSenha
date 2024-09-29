@@ -101,7 +101,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   };
 
   const zoomSenha = () => {
-    setFontSizeZoom(prevSize => (prevSize === 14 ? 28 : 14));
+    setFontSizeZoom(prevSize => (prevSize === 14 ? 24 : 14));
   }
 
   const handleBackdropPress = () => {

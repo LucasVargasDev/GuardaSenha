@@ -3,12 +3,17 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, StatusBar, Alert } 
 import { MaterialIcons } from '@expo/vector-icons';
 import ModalCadastro from './ModalCadastro';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFonts } from 'expo-font'; 
 
 export default function HomeScreen() {
   const [logins, setLogins] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedLogin, setSelectedLogin] = useState(null);
   const [viewOnly, setViewOnly] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'), // Verifique o caminho
+  });
 
   useEffect(() => {
     const loadLogins = async () => {
@@ -24,6 +29,10 @@ export default function HomeScreen() {
 
     loadLogins();
   }, []);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const saveLogins = async (newLogins) => {
     try {
@@ -95,8 +104,11 @@ export default function HomeScreen() {
       <StatusBar barStyle="light-content" backgroundColor="#293A97" />
 
       <View style={styles.header}>
-        <Text style={styles.headerText}>GuardaSenha</Text>
-        <MaterialIcons name="more-vert" size={24} color="#C8D4F1" />
+        <Text style={[styles.headerText, { fontFamily: 'Shanti-Regular' }]}>GuardaSenha</Text>
+        <View style={styles.iconContainer}>
+          <MaterialIcons name="search" size={24} color="#C8D4F1"/>
+          <MaterialIcons name="more-vert" size={24} color="#C8D4F1"/>
+        </View>
       </View>
 
       <FlatList
@@ -135,24 +147,27 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#C8D4F1',
-    fontSize: 24,
+    fontSize: 28,
     textAlign: 'left',
   },
   loginContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 20, // Ajusta o padding vertical
+    paddingHorizontal: 15, // Adiciona padding horizontal para mover tudo para a esquerda
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-    marginHorizontal: 20,
   },
   iconContainer: {
-    marginRight: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end', 
   },
   iconCircle: {
     width: 40,
     height: 40,
     borderRadius: 20,
+    marginRight: 10,
     backgroundColor: '#293A97',
     justifyContent: 'center',
     alignItems: 'center',
