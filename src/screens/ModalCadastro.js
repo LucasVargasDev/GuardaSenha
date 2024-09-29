@@ -119,14 +119,14 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   
               <View style={styles.modalContent}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, viewOnly && styles.inputViewOnly]}
                   placeholder="Sistema"
                   value={sistema}
                   onChangeText={setSistema}
                   editable={!viewOnly}
                 />
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, viewOnly && styles.inputViewOnly]}
                   placeholder="Login"
                   value={login}
                   onChangeText={setLogin}
@@ -135,7 +135,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
 
                 <View style={styles.senhaContainer}>
                   <TextInput
-                    style={styles.inputSenha}
+                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly]}
                     placeholder="Senha"
                     value={senha}
                     onChangeText={handleSenhaChange}
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: '#C8D4F1',
-    fontSize: 24,
+    fontSize: 18,
     textAlign: 'left',
     flex: 1,
     marginLeft: 10,
@@ -232,6 +232,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     width: '100%',
+  },
+  inputViewOnly: {
+    backgroundColor: '#f0f0f0', // Cor de fundo leve
+    color: '#888', // Cor do texto em modo de visualização
   },
   senhaContainer: {
     flexDirection: 'row',
