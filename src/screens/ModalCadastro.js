@@ -11,6 +11,8 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   const [senhaSegura, setSenhaSegura] = useState({ color: 'gray', icon: 'shield' }); // Estado da cor e ícone do input
   const [popupVisible, setPopupVisible] = useState(false); // Estado para o popup de informações
 
+  const [fontSizeZoom, setFontSizeZoom] = useState(14);
+
   useEffect(() => {
     if (selectedLogin) {
       setSistema(selectedLogin.sistema);
@@ -98,6 +100,10 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     validarSenha(novaSenha); // Validar a nova senha gerada
   };
 
+  const zoomSenha = () => {
+    setFontSizeZoom(prevSize => (prevSize === 14 ? 28 : 14));
+  }
+
   const handleBackdropPress = () => {
     onClose(); 
     resetInputs(); 
@@ -135,7 +141,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
 
                 <View style={styles.senhaContainer}>
                   <TextInput
-                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly]}
+                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontSize:  fontSizeZoom}]}
                     placeholder="Senha"
                     value={senha}
                     onChangeText={handleSenhaChange}
@@ -154,6 +160,13 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                   <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
                     <FontAwesome name="key" size={18} color="white" />
                     <Text style={styles.gerarSenhaText}>Gerar</Text>
+                  </TouchableOpacity>
+                )}
+
+                {viewOnly && (
+                  <TouchableOpacity style={styles.zoomButton} onPress={zoomSenha}>
+                    <FontAwesome name="search" size={18} color="white" />
+                    <Text style={styles.zoomText}>Zoom</Text>
                   </TouchableOpacity>
                 )}
   
@@ -266,7 +279,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  zoomButton: {
+    backgroundColor: '#2E8B57', // Verde escuro
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginTop: 10, // Espaço acima do botão
+    alignSelf: 'flex-end', // Alinha o botão à direita
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   gerarSenhaText: {
+    color: 'white',
+    marginLeft: 5, // Espaço entre o ícone e o texto
+  },
+  zoomText: {
     color: 'white',
     marginLeft: 5, // Espaço entre o ícone e o texto
   },
