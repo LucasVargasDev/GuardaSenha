@@ -4,7 +4,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
 import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
 
-export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly }) {
+export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly, logins }) {
   const [sistema, setSistema] = useState('');
   const [login, setLogin] = useState('');
   const [senha, setSenha] = useState('');
@@ -36,9 +36,18 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     }
   };
 
+  const isDuplicate = () => {
+    return logins && Array.isArray(logins) && logins.some((item) => item.sistema === sistema && item.login === login);
+  };
+  
   const handleSave = () => {
     if (!sistema || !login || !senha) {
       alert('Todos os campos devem ser preenchidos.');
+      return;
+    }
+
+    if (isDuplicate() && !selectedLogin) {
+      alert('Essa combinação de sistema e login já existe.');
       return;
     }
 
@@ -107,6 +116,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   const handleBackdropPress = () => {
     onClose(); 
     resetInputs(); 
+    setFontSizeZoom(14);
   };
 
   return (

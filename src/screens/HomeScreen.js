@@ -128,6 +128,7 @@ export default function HomeScreen() {
         onEdit={handleEditLogin}
         selectedLogin={selectedLogin}
         viewOnly={viewOnly}
+        logins={logins}
       />
     </View>
   );
