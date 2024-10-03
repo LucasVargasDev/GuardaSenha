@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, Alert, AppState, StyleSheet, Platform  } from 'react-native';
+import { useFonts } from 'expo-font'; 
 import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function AuthScreen({ navigation }) {
+
+  const [fontsLoaded] = useFonts({
+    'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
+  });
+
   useEffect(() => {
     authenticate();
   }, []);
@@ -52,6 +58,10 @@ export default function AuthScreen({ navigation }) {
     }
   };
 
+  if (!fontsLoaded) {
+    return <View style={styles.container}><Text>Carregando fontes...</Text></View>;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Aguardando Autenticação...</Text>
@@ -68,6 +78,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#C8D4F1', // Cor das letras
-    fontSize: 18
+    fontSize: 18,
+    fontFamily: 'SourceSerif4-Regular',
   },
 });

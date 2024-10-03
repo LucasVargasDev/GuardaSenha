@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWithoutFeedback, ActivityIndicator  } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
 import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
+import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
 
 export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly, logins }) {
@@ -17,6 +18,11 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaTitle, setAlertaTitle] = useState('');
   const [alertaMessage, setAlertaMessage] = useState('');
+
+  const [fontsLoaded] = useFonts({
+    'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
+  });
+
 
   useEffect(() => {
     if (selectedLogin) {
@@ -119,7 +125,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   };
 
   const zoomSenha = () => {
-    setFontSizeZoom(prevSize => (prevSize === 14 ? 24 : 14));
+    setFontSizeZoom(prevSize => (prevSize === 14 ? 20 : 14));
   }
 
   const handleBackdropPress = () => {
@@ -128,8 +134,13 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     setFontSizeZoom(14);
   };
 
+    // Verificação se as fontes foram carregadas
+    if (!fontsLoaded) {
+      return <ActivityIndicator size="large" color="#0000ff" />; // Exibe um indicador de carregamento enquanto as fontes são carregadas
+    }
+
   return (
-    <Modal visible={visible} animationType="slide" transparent={true}>
+    <Modal style={styles.container} visible={visible} animationType="slide" transparent={true}>
       <TouchableWithoutFeedback onPress={handleBackdropPress}>
         <View style={styles.modalOverlay}>
           <TouchableWithoutFeedback onPress={() => {}}>
@@ -144,14 +155,14 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   
               <View style={styles.modalContent}>
                 <TextInput
-                  style={[styles.input, viewOnly && styles.inputViewOnly]}
+                  style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
                   placeholder="Sistema"
                   value={sistema}
                   onChangeText={setSistema}
                   editable={!viewOnly}
                 />
                 <TextInput
-                  style={[styles.input, viewOnly && styles.inputViewOnly]}
+                  style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
                   placeholder="Login"
                   value={login}
                   onChangeText={setLogin}
@@ -160,7 +171,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
 
                 <View style={styles.senhaContainer}>
                   <TextInput
-                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontSize:  fontSizeZoom}]}
+                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular', fontSize:  fontSizeZoom}]}
                     placeholder="Senha"
                     value={senha}
                     onChangeText={handleSenhaChange}
@@ -234,6 +245,9 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
 }
 
 const styles = StyleSheet.create({
+  container: {
+    fontFamily: 'SourceSerif4-Regular'
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -272,10 +286,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     width: '100%',
+    fontFamily: 'SourceSerif4-Regular'
   },
   inputViewOnly: {
     backgroundColor: '#f0f0f0', // Cor de fundo leve
     color: '#888', // Cor do texto em modo de visualização
+    fontFamily: 'SourceSerif4-Regular'
   },
   senhaContainer: {
     flexDirection: 'row',

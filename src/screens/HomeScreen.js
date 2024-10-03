@@ -18,7 +18,8 @@ export default function HomeScreen() {
   const [loginToDelete, setLoginToDelete] = useState(null);
 
   const [fontsLoaded] = useFonts({
-    'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'), // Verifique o caminho
+    'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'),
+    'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -169,6 +170,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    fontFamily: 'SourceSerif4-Regular'
   },
   header: {
     backgroundColor: '#293A97',
@@ -230,10 +232,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 17,
     color: '#4F4F4F',
+    fontFamily: 'SourceSerif4-Regular'
   },
   loginText: {
     fontSize: 16,
     color: '#666',
+    fontFamily: 'SourceSerif4-Regular'
   },
   iconsContainer: {
     flexDirection: 'row',
