@@ -3,8 +3,9 @@ import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, TouchableWi
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
 import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
+import Alerta from '../components/Alerta'; 
 
-export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly }) {
+export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly, logins }) {
   const [sistema, setSistema] = useState('');
   const [login, setLogin] = useState('');
   const [senha, setSenha] = useState('');
@@ -12,6 +13,10 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   const [popupVisible, setPopupVisible] = useState(false); // Estado para o popup de informações
 
   const [fontSizeZoom, setFontSizeZoom] = useState(14);
+
+  const [alertaVisible, setAlertaVisible] = useState(false);
+  const [alertaTitle, setAlertaTitle] = useState('');
+  const [alertaMessage, setAlertaMessage] = useState('');
 
   useEffect(() => {
     if (selectedLogin) {
@@ -36,12 +41,25 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     }
   };
 
+  const isDuplicate = () => {
+    return logins && Array.isArray(logins) && logins.some((item) => item.sistema === sistema && item.login === login);
+  };
+  
   const handleSave = () => {
     if (!sistema || !login || !senha) {
-      alert('Todos os campos devem ser preenchidos.');
+      setAlertaTitle('Erro');
+      setAlertaMessage('Todos os campos devem ser preenchidos.');
+      setAlertaVisible(true);
       return;
     }
-
+  
+    if (isDuplicate() && !selectedLogin) {
+      setAlertaTitle('Erro');
+      setAlertaMessage('Essa combinação de sistema e login já existe.');
+      setAlertaVisible(true);
+      return;
+    }
+  
     const loginData = { id: selectedLogin ? selectedLogin.id : Date.now(), sistema, login, senha };
     if (selectedLogin) {
       onEdit(loginData);
@@ -107,6 +125,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
   const handleBackdropPress = () => {
     onClose(); 
     resetInputs(); 
+    setFontSizeZoom(14);
   };
 
   return (
@@ -175,6 +194,14 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                     <Text style={styles.saveButtonText}>Salvar</Text>
                   </TouchableOpacity>
                 )}
+
+                <Alerta
+                  visible={alertaVisible}
+                  onClose={() => setAlertaVisible(false)}
+                  title={alertaTitle}
+                  message={alertaMessage}
+                  isValidationError={true}
+                />
               </View>
             </View>
           </TouchableWithoutFeedback>

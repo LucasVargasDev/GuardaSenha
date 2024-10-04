@@ -4,12 +4,18 @@ import { MaterialIcons } from '@expo/vector-icons';
 import ModalCadastro from './ModalCadastro';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
+import Alerta from '../components/Alerta'; 
 
 export default function HomeScreen() {
   const [logins, setLogins] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedLogin, setSelectedLogin] = useState(null);
   const [viewOnly, setViewOnly] = useState(false);
+
+  const [alertaVisible, setAlertaVisible] = useState(false);
+  const [alertaTitle, setAlertaTitle] = useState('');
+  const [alertaMessage, setAlertaMessage] = useState('');
+  const [loginToDelete, setLoginToDelete] = useState(null);
 
   const [fontsLoaded] = useFonts({
     'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'), // Verifique o caminho
@@ -72,6 +78,23 @@ export default function HomeScreen() {
     setViewOnly(false);
   };
 
+  const confirmDeleteLogin = (id) => {
+    setLoginToDelete(id);
+    setAlertaTitle("Confirmar Exclusão");
+    setAlertaMessage("Você tem certeza que deseja excluir esta conta?");
+    setAlertaVisible(true);
+  };
+  
+  const handleAlertClose = () => {
+    setAlertaVisible(false);
+    setLoginToDelete(null);
+  };
+  
+  const handleAlertConfirm = () => {
+    handleDeleteLogin(loginToDelete);
+    handleAlertClose();
+  };
+
   const renderItem = ({ item }) => (
     <View style={styles.loginContainer}>
       <View style={styles.iconContainer}>
@@ -79,12 +102,12 @@ export default function HomeScreen() {
           <Text style={styles.iconText}>{item.sistema[0]}</Text>
         </View>
       </View>
-
+  
       <View style={styles.textContainer}>
         <Text style={styles.systemText}>{item.sistema}</Text>
         <Text style={styles.loginText} numberOfLines={1} ellipsizeMode="tail">{item.login}</Text>
       </View>
-
+  
       <View style={styles.iconsContainer}>
         <TouchableOpacity onPress={() => openModal(item, true)}>
           <MaterialIcons name="visibility" size={24} color="#4F4F4F" />
@@ -92,12 +115,13 @@ export default function HomeScreen() {
         <TouchableOpacity onPress={() => openModal(item)}>
           <MaterialIcons name="edit" size={24} color="#4F4F4F" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDeleteLogin(item.id)}>
+        <TouchableOpacity onPress={() => confirmDeleteLogin(item.id)}>
           <MaterialIcons name="delete" size={24} color="#4F4F4F" />
         </TouchableOpacity>
       </View>
     </View>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -128,6 +152,16 @@ export default function HomeScreen() {
         onEdit={handleEditLogin}
         selectedLogin={selectedLogin}
         viewOnly={viewOnly}
+        logins={logins}
+      />
+
+      <Alerta
+        visible={alertaVisible}
+        onClose={handleAlertClose}
+        title={alertaTitle}
+        message={alertaMessage}
+        onConfirm={handleAlertConfirm}
+        onCancel={handleAlertClose}
       />
     </View>
   );
