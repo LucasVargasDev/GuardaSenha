@@ -1,6 +1,6 @@
 # GuardaSenha
 
-**Definição do problema **
+**Definição do problema**
 Esquecimento de senhas.
 Atualmente, as aplicações web têm se tornado cada vez mais populares para resolver tarefas que antes 
 exigiam presença física, como solicitar auxílios do governo, recarregar o cartão de transporte público, 
