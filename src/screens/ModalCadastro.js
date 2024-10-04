@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Octicons } from '@expo/vector-icons'; // Importando Octicons
+import { FontAwesome } from '@expo/vector-icons'; // Importando FontAwesome para o ícone de senha
 
 export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly }) {
   const [sistema, setSistema] = useState('');
@@ -69,19 +70,46 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     setPopupVisible(false);
   };
 
+  const gerarSenhaSegura = () => {
+    const letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz';
+    const numeros = '0123456789';
+    const caracteresEspeciais = '!@#$%^&*';
+    
+    // Garantindo que a senha tenha pelo menos uma letra maiúscula, um número e um caractere especial
+    let novaSenha = '';
+    novaSenha += letrasMaiusculas[Math.floor(Math.random() * letrasMaiusculas.length)];
+    novaSenha += numeros[Math.floor(Math.random() * numeros.length)];
+    novaSenha += caracteresEspeciais[Math.floor(Math.random() * caracteresEspeciais.length)];
+    
+    // Gerando o restante da senha para ter entre 6 a 8 caracteres
+    const todosOsCaracteres = letrasMaiusculas + letrasMinusculas + numeros + caracteresEspeciais;
+    const tamanhoRestante = Math.floor(Math.random() * 3) + 3; // Para que a senha total tenha entre 6 e 8 caracteres
+  
+    for (let i = 0; i < tamanhoRestante; i++) {
+      const indice = Math.floor(Math.random() * todosOsCaracteres.length);
+      novaSenha += todosOsCaracteres[indice];
+    }
+  
+    // Embaralhando a senha para que os caracteres obrigatórios não fiquem em posições fixas
+    novaSenha = novaSenha.split('').sort(() => 0.5 - Math.random()).join('');
+  
+    setSenha(novaSenha);
+    validarSenha(novaSenha); // Validar a nova senha gerada
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
-
+  
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => {onClose(); resetInputs();}}>
+            <TouchableOpacity onPress={() => { onClose(); resetInputs(); }}>
               <MaterialIcons name="arrow-back" size={24} color="#C8D4F1" />
             </TouchableOpacity>
-            <Text style={styles.headerText}>{viewOnly ? 'Visualizar' : selectedLogin ? 'Editar' : 'Adicionar'} Login</Text>
-            <MaterialIcons name="more-vert" size={24} color="#C8D4F1" />
+            <Text style={styles.headerText}>{viewOnly ? 'Visualizar' : selectedLogin ? 'Editar' : 'Adicionar'} Conta</Text>
           </View>
-
+  
           <View style={styles.modalContent}>
             <TextInput
               style={styles.input}
@@ -97,6 +125,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
               onChangeText={setLogin}
               editable={!viewOnly}
             />
+
             <View style={styles.senhaContainer}>
               <TextInput
                 style={styles.inputSenha}
@@ -107,13 +136,20 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
               />
               <Octicons
                 name={senhaSegura.icon}
-                size={24}
+                size={20} // Ajuste o tamanho conforme necessário
                 color={senhaSegura.color}
                 style={styles.iconeSenha}
                 onPress={handleIconPress}
               />
             </View>
-
+  
+            {!selectedLogin && (
+              <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
+                <FontAwesome name="key" size={18} color="white" />
+                <Text style={styles.gerarSenhaText}>Gerar</Text>
+              </TouchableOpacity>
+            )}
+  
             {!viewOnly && (
               <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                 <Text style={styles.saveButtonText}>Salvar</Text>
@@ -121,12 +157,12 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
             )}
           </View>
         </View>
-
+  
         {popupVisible && (
           <Modal transparent={true} visible={popupVisible} animationType="fade">
             <View style={styles.popupOverlay}>
               <View style={styles.popupContainer}>
-                <Text style={styles.popupText}>Segurança da Senha:</Text>
+                <Text style={styles.popupText}>Segurança da Senha</Text>
                 <Text style={styles.popupInfo}>
                   <Octicons name="shield-check" size={16} color="green" /> Verde: Senha segura (mín. 6 caracteres, 1 maiúscula, 1 número, 1 especial)
                 </Text>
@@ -191,6 +227,7 @@ const styles = StyleSheet.create({
   senhaContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    position: 'relative', // Permite que o ícone seja posicionado relativamente ao container
   },
   inputSenha: {
     height: 50,
@@ -202,19 +239,33 @@ const styles = StyleSheet.create({
   },
   iconeSenha: {
     position: 'absolute',
-    right: 10,
+    right: 15, // Ajuste conforme necessário
+    top: '50%', // Alinha verticalmente ao centro
+    transform: [{ translateY: -12 }], // Ajuste para centralizar verticalmente
+  },
+  gerarSenhaButton: {
+    backgroundColor: '#2E8B57', // Verde escuro
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginTop: 10, // Espaço acima do botão
+    alignSelf: 'flex-end', // Alinha o botão à direita
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  gerarSenhaText: {
+    color: 'white',
+    marginLeft: 5, // Espaço entre o ícone e o texto
   },
   saveButton: {
-    backgroundColor: '#293A97',
-    paddingVertical: 15,
+    backgroundColor: '#007BFF',
+    paddingVertical: 10,
     borderRadius: 5,
-    alignItems: 'center',
     marginTop: 20,
   },
   saveButtonText: {
     color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
   popupOverlay: {
     flex: 1,
@@ -223,31 +274,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   popupContainer: {
-    width: '80%',
     backgroundColor: 'white',
-    borderRadius: 10,
     padding: 20,
+    borderRadius: 10,
     alignItems: 'center',
   },
   popupText: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
   },
   popupInfo: {
-    fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'left',
+    marginVertical: 5,
   },
   closeButton: {
-    backgroundColor: '#293A97',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: '#007BFF',
+    padding: 10,
     borderRadius: 5,
     marginTop: 10,
   },
   closeButtonText: {
     color: 'white',
-    fontSize: 16,
   },
 });
