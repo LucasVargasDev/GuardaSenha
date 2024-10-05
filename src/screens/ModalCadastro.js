@@ -151,14 +151,26 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                             <View style={styles.modalContent}>
                                 {viewOnly ? (
                                     <>
-                                        <Text style={styles.label}>Sistema:</Text>
-                                        <Text style={styles.value}>{sistema}</Text>
+                                        <View style={styles.infoContainer}>
+                                            <Text style={styles.label}>
+                                                <MaterialIcons name="app-registration" size={16} color="#666" /> Sistema:
+                                            </Text>
+                                            <Text style={styles.value}>{sistema}</Text>
+                                        </View>
 
-                                        <Text style={styles.label}>Login:</Text>
-                                        <Text style={styles.value}>{login}</Text>
+                                        <View style={styles.infoContainer}>
+                                            <Text style={styles.label}>
+                                                <MaterialIcons name="person" size={16} color="#666" /> Login:
+                                            </Text>
+                                            <Text style={styles.value}>{login}</Text>
+                                        </View>
 
-                                        <Text style={styles.label}>Senha:</Text>
-                                        <Text style={[styles.value, { fontSize: fontSizeZoom }]}>{senha}</Text>
+                                        <View style={styles.infoContainer}>
+                                            <Text style={styles.label}>
+                                                <MaterialIcons name="lock" size={16} color="#666" /> Senha:
+                                            </Text>
+                                            <Text style={[styles.value, { fontSize: fontSizeZoom }]}>{senha}</Text>
+                                        </View>
                                     </>
                                 ) : (
                                     <>
@@ -381,7 +393,7 @@ const styles = StyleSheet.create({
     },
     popupText: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: '600',
     },
     popupInfo: {
         marginVertical: 5,
@@ -395,17 +407,26 @@ const styles = StyleSheet.create({
     closeButtonText: {
         color: 'white',
     },
+    infoContainer: {
+        marginBottom: 15,
+        padding: 15,
+        backgroundColor: '#f0f4f8',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
     label: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
         marginBottom: 5,
         color: '#333',
     },
     value: {
-        fontSize: 16,
-        marginBottom: 20,
+        fontSize: 14,
         padding: 10,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 5,
+        backgroundColor: '#ffffff',
+        color: '#222',
     },
 });
