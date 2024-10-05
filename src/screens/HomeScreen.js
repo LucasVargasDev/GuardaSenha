@@ -108,7 +108,7 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.textContainer}>
-                <Text style={styles.systemText}>{item.sistema}</Text>
+                <Text style={styles.systemText} numberOfLines={1} ellipsizeMode="tail">{item.sistema}</Text>
                 <Text style={styles.loginText} numberOfLines={1} ellipsizeMode="tail">{item.login}</Text>
             </View>
 

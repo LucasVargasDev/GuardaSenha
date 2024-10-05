@@ -162,6 +162,8 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                     value={login}
                                     onChangeText={setLogin}
                                     editable={!viewOnly}
+                                    autoCapitalize="none"
+                                    multiline={true}
                                 />
 
                                 <View style={styles.senhaContainer}>
@@ -171,6 +173,8 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                         value={senha}
                                         onChangeText={handleSenhaChange}
                                         editable={!viewOnly}
+                                        autoCapitalize="none"
+                                        multiline={true}
                                     />
                                     <Octicons
                                         name={senhaSegura.icon}
@@ -178,6 +182,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                         color={senhaSegura.color}
                                         style={styles.iconeSenha}
                                         onPress={handleIconPress}
+                                        multiline={true}
                                     />
                                 </View>
                 
@@ -300,6 +305,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         borderRadius: 5,
         flex: 1,
+        paddingRight: 40
     },
     iconeSenha: {
         position: 'absolute',
