@@ -176,15 +176,17 @@ export default function HomeScreen() {
 
             <ActionSheet ref={actionSheetRef}>
                 <View style={styles.actionSheetContainer}>
-                <TouchableOpacity
-                    style={styles.actionOption}
-                    onPress={() => {
-                        actionSheetRef.current?.setModalVisible(false);
-                        Clipboard.setString(selectedLogin.senha); // Copiar senha para a área de transferência
-                    }}
-                >
-                    <Text style={styles.actionText}>Copiar Senha</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            actionSheetRef.current?.setModalVisible(false);
+                            Clipboard.setString(selectedLogin.senha); // Copiar senha para a área de transferência
+                        }}
+                    >
+                        <MaterialIcons name="content-copy" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Copiar Senha</Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
@@ -192,8 +194,10 @@ export default function HomeScreen() {
                             openModal(selectedLogin);
                         }}
                     >
-                        <Text style={styles.actionText}>Editar</Text>
+                        <MaterialIcons name="edit" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Editar Conta</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
@@ -201,10 +205,12 @@ export default function HomeScreen() {
                             confirmDeleteLogin(selectedLogin.id);
                         }}
                     >
-                        <Text style={styles.actionText}>Remover</Text>
+                        <MaterialIcons name="delete" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Remover Conta</Text>
                     </TouchableOpacity>
                 </View>
             </ActionSheet>
+
         </View>
     );
 }
@@ -309,12 +315,15 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     actionOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingVertical: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
     },
     actionText: {
-        fontSize: 18,
+        fontSize: 16,
         color: '#333',
-    },
+        marginLeft: 10,
+    }
 });
