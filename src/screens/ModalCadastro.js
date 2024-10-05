@@ -149,43 +149,59 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                             </View>
                 
                             <View style={styles.modalContent}>
-                                <TextInput
-                                    style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
-                                    placeholder="Sistema"
-                                    value={sistema}
-                                    onChangeText={setSistema}
-                                    editable={!viewOnly}
-                                />
-                                <TextInput
-                                    style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
-                                    placeholder="Login"
-                                    value={login}
-                                    onChangeText={setLogin}
-                                    editable={!viewOnly}
-                                    autoCapitalize="none"
-                                    multiline={true}
-                                />
+                                {viewOnly ? (
+                                    <>
+                                        <Text style={styles.label}>Sistema:</Text>
+                                        <Text style={styles.value}>{sistema}</Text>
 
-                                <View style={styles.senhaContainer}>
-                                    <TextInput
-                                        style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular', fontSize:  fontSizeZoom}]}
-                                        placeholder="Senha"
-                                        value={senha}
-                                        onChangeText={handleSenhaChange}
-                                        editable={!viewOnly}
-                                        autoCapitalize="none"
-                                        multiline={true}
-                                    />
-                                    <Octicons
-                                        name={senhaSegura.icon}
-                                        size={20}
-                                        color={senhaSegura.color}
-                                        style={styles.iconeSenha}
-                                        onPress={handleIconPress}
-                                        multiline={true}
-                                    />
-                                </View>
-                
+                                        <Text style={styles.label}>Login:</Text>
+                                        <Text style={styles.value}>{login}</Text>
+
+                                        <Text style={styles.label}>Senha:</Text>
+                                        <Text style={[styles.value, { fontSize: fontSizeZoom }]}>{senha}</Text>
+                                    </>
+                                ) : (
+                                    <>
+                                        <TextInput
+                                            style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
+                                            placeholder="Sistema"
+                                            value={sistema}
+                                            onChangeText={setSistema}
+                                            editable={!viewOnly}
+                                            multiline={true}
+                                        />
+                                        <TextInput
+                                            style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
+                                            placeholder="Login"
+                                            value={login}
+                                            onChangeText={setLogin}
+                                            editable={!viewOnly}
+                                            autoCapitalize="none"
+                                            multiline={true}
+                                        />
+
+                                        <View style={styles.senhaContainer}>
+                                            <TextInput
+                                                style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular', fontSize:  fontSizeZoom}]}
+                                                placeholder="Senha"
+                                                value={senha}
+                                                onChangeText={handleSenhaChange}
+                                                editable={!viewOnly}
+                                                autoCapitalize="none"
+                                                multiline={true}
+                                            />
+                                            <Octicons
+                                                name={senhaSegura.icon}
+                                                size={20}
+                                                color={senhaSegura.color}
+                                                style={styles.iconeSenha}
+                                                onPress={handleIconPress}
+                                                multiline={true}
+                                            />
+                                        </View>
+                                    </>
+                                )}
+
                                 {!selectedLogin && (
                                     <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
                                         <FontAwesome name="key" size={18} color="white" />
@@ -378,5 +394,18 @@ const styles = StyleSheet.create({
     },
     closeButtonText: {
         color: 'white',
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        color: '#333',
+    },
+    value: {
+        fontSize: 16,
+        marginBottom: 20,
+        padding: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
     },
 });
