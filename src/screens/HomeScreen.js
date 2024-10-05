@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import ModalCadastro from './ModalCadastro';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
+import ActionSheet from 'react-native-actions-sheet';
 
 export default function HomeScreen() {
     const [logins, setLogins] = useState([]);
@@ -15,6 +16,7 @@ export default function HomeScreen() {
     const [alertaTitle, setAlertaTitle] = useState('');
     const [alertaMessage, setAlertaMessage] = useState('');
     const [loginToDelete, setLoginToDelete] = useState(null);
+    const actionSheetRef = useRef(null);
     const [fontsLoaded] = useFonts({
         'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'),
         'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
@@ -92,6 +94,11 @@ export default function HomeScreen() {
         handleAlertClose();
     };
 
+    const openActionSheet = (login) => {
+        setSelectedLogin(login);
+        actionSheetRef.current?.setModalVisible(true);
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.loginContainer}>
             <View style={styles.iconContainer}>
@@ -109,11 +116,8 @@ export default function HomeScreen() {
                 <TouchableOpacity onPress={() => openModal(item, true)}>
                     <MaterialIcons name="visibility" size={24} color="#4F4F4F" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => openModal(item)}>
-                    <MaterialIcons name="edit" size={24} color="#4F4F4F" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => confirmDeleteLogin(item.id)}>
-                    <MaterialIcons name="delete" size={24} color="#4F4F4F" />
+                <TouchableOpacity onPress={() => openActionSheet(item)} style={styles.optionIcon}>
+                    <Ionicons name="options-outline" size={24} color="#4F4F4F" />
                 </TouchableOpacity>
             </View>
         </View>
@@ -159,9 +163,33 @@ export default function HomeScreen() {
                 onConfirm={handleAlertConfirm}
                 onCancel={handleAlertClose}
             />
+
+            <ActionSheet ref={actionSheetRef}>
+                <View style={styles.actionSheetContainer}>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            actionSheetRef.current?.setModalVisible(false);
+                            openModal(selectedLogin);
+                        }}
+                    >
+                        <Text style={styles.actionText}>Editar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            actionSheetRef.current?.setModalVisible(false);
+                            confirmDeleteLogin(selectedLogin.id);
+                        }}
+                    >
+                        <Text style={styles.actionText}>Remover</Text>
+                    </TouchableOpacity>
+                </View>
+            </ActionSheet>
         </View>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -188,8 +216,6 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         backgroundColor: '#fff',
-        borderRadius: 0,
-        marginTop: 2,
         marginBottom: 5,
         shadowColor: '#000',
         shadowOffset: {
@@ -236,8 +262,11 @@ const styles = StyleSheet.create({
     },
     iconsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         width: 90,
+    },
+    optionIcon: {
+        marginLeft: 10,
     },
     floatingButton: {
         position: 'absolute',
@@ -256,5 +285,17 @@ const styles = StyleSheet.create({
         color: 'white',
         marginLeft: 10,
         fontSize: 16,
+    },
+    actionSheetContainer: {
+        padding: 20,
+    },
+    actionOption: {
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    actionText: {
+        fontSize: 18,
+        color: '#333',
     },
 });
