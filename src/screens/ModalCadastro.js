@@ -155,21 +155,21 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                             <Text style={styles.label}>
                                                 <MaterialIcons name="app-registration" size={16} color="#666" /> Sistema:
                                             </Text>
-                                            <Text style={styles.value}>{sistema}</Text>
+                                            <Text style={[styles.value, { fontFamily: 'SourceSerif4-Regular' }]}>{sistema}</Text>
                                         </View>
 
                                         <View style={styles.infoContainer}>
                                             <Text style={styles.label}>
                                                 <MaterialIcons name="person" size={16} color="#666" /> Login:
                                             </Text>
-                                            <Text style={styles.value}>{login}</Text>
+                                            <Text style={[styles.value, { fontFamily: 'SourceSerif4-Regular' }]}>{login}</Text>
                                         </View>
 
                                         <View style={styles.infoContainer}>
                                             <Text style={styles.label}>
                                                 <MaterialIcons name="lock" size={16} color="#666" /> Senha:
                                             </Text>
-                                            <Text style={[styles.value, { fontSize: fontSizeZoom }]}>{senha}</Text>
+                                            <Text style={[styles.value, { fontSize: fontSizeZoom, fontFamily: 'SourceSerif4-Regular' }]}>{senha}</Text>
                                         </View>
                                     </>
                                 ) : (

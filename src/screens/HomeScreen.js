@@ -13,6 +13,7 @@ export default function HomeScreen() {
     const [selectedLogin, setSelectedLogin] = useState(null);
     const [viewOnly, setViewOnly] = useState(false);
     const [alertaVisible, setAlertaVisible] = useState(false);
+    const [isValidationError, setIsValidationError] = useState(false);
     const [alertaTitle, setAlertaTitle] = useState('');
     const [alertaMessage, setAlertaMessage] = useState('');
     const [loginToDelete, setLoginToDelete] = useState(null);
@@ -99,6 +100,13 @@ export default function HomeScreen() {
         actionSheetRef.current?.setModalVisible(true);
     };
 
+    const showUnavailableAlert = () => {
+        setAlertaTitle("Opção Indisponível");
+        setAlertaMessage("As opções de filtro e configurações gerais ainda não estão disponíveis na versão beta 1.");
+        setAlertaVisible(true);
+        setIsValidationError(true);
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.loginContainer}>
             <View style={styles.iconContainer}>
@@ -130,8 +138,8 @@ export default function HomeScreen() {
             <View style={styles.header}>
                 <Text style={[styles.headerText, { fontFamily: 'Shanti-Regular' }]}>GuardaSenha</Text>
                 <View style={styles.iconContainer}>
-                    <MaterialIcons name="search" size={24} color="#C8D4F1"/>
-                    <MaterialIcons name="more-vert" size={24} color="#C8D4F1"/>
+                    <MaterialIcons name="search" size={24} color="#C8D4F1" onPress={() => showUnavailableAlert()}/>
+                    <MaterialIcons name="more-vert" size={24} color="#C8D4F1" onPress={() => showUnavailableAlert()}/>
                 </View>
             </View>
 
@@ -162,6 +170,7 @@ export default function HomeScreen() {
                 message={alertaMessage}
                 onConfirm={handleAlertConfirm}
                 onCancel={handleAlertClose}
+                isValidationError={isValidationError}
             />
 
             <ActionSheet ref={actionSheetRef}>
