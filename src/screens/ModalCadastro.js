@@ -174,42 +174,57 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                     </>
                                 ) : (
                                     <>
-                                        <TextInput
-                                            style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
-                                            placeholder="Sistema"
-                                            value={sistema}
-                                            onChangeText={setSistema}
-                                            editable={!viewOnly}
-                                            multiline={true}
-                                        />
-                                        <TextInput
-                                            style={[styles.input, viewOnly && styles.inputViewOnly, {fontFamily: 'SourceSerif4-Regular'}]}
-                                            placeholder="Login"
-                                            value={login}
-                                            onChangeText={setLogin}
-                                            editable={!viewOnly}
-                                            autoCapitalize="none"
-                                            multiline={true}
-                                        />
-
-                                        <View style={styles.senhaContainer}>
+                                        <View style={styles.inputContainer}>
+                                            <View style={styles.rowContainer}>
+                                                <MaterialIcons name="business" size={20} color="#666" />
+                                                <Text style={styles.inputLabel}>Sistema</Text>
+                                            </View>
                                             <TextInput
-                                                style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular', fontSize:  fontSizeZoom}]}
-                                                placeholder="Senha"
-                                                value={senha}
-                                                onChangeText={handleSenhaChange}
+                                                style={[styles.input, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular' }]}
+                                                value={sistema}
+                                                onChangeText={setSistema}
+                                                editable={!viewOnly}
+                                                multiline={true}
+                                            />
+                                        </View>
+
+                                        <View style={styles.inputContainer}>
+                                            <View style={styles.rowContainer}>
+                                                <MaterialIcons name="person" size={20} color="#666" />
+                                                <Text style={styles.inputLabel}>Login</Text>
+                                            </View>
+                                            <TextInput
+                                                style={[styles.input, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular' }]}
+                                                value={login}
+                                                onChangeText={setLogin}
                                                 editable={!viewOnly}
                                                 autoCapitalize="none"
                                                 multiline={true}
                                             />
-                                            <Octicons
-                                                name={senhaSegura.icon}
-                                                size={20}
-                                                color={senhaSegura.color}
-                                                style={styles.iconeSenha}
-                                                onPress={handleIconPress}
-                                                multiline={true}
-                                            />
+                                        </View>
+
+                                        <View style={styles.inputContainer}>
+                                            <View style={styles.rowContainer}>
+                                                <MaterialIcons name="lock" size={20} color="#666" />
+                                                <Text style={styles.inputLabel}>Senha</Text>
+                                            </View>
+                                            <View style={styles.senhaContainer}>
+                                                <TextInput
+                                                    style={[styles.inputSenha, viewOnly && styles.inputViewOnly, { fontFamily: 'SourceSerif4-Regular', fontSize: fontSizeZoom }]}
+                                                    value={senha}
+                                                    onChangeText={handleSenhaChange}
+                                                    editable={!viewOnly}
+                                                    autoCapitalize="none"
+                                                    multiline={true}
+                                                />
+                                                <Octicons
+                                                    name={senhaSegura.icon}
+                                                    size={20}
+                                                    color={senhaSegura.color}
+                                                    style={styles.iconeSenha}
+                                                    onPress={handleIconPress}
+                                                />
+                                            </View>
                                         </View>
                                     </>
                                 )}
@@ -428,5 +443,19 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#ffffff',
         color: '#222',
+    },
+    inputContainer: {
+        marginBottom: 0,
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 3,
+    },
+    inputLabel: {
+        fontSize: 16,
+        fontWeight: '600',
+        marginLeft: 5,
+        color: '#666',
     },
 });
