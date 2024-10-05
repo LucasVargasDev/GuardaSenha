@@ -5,6 +5,7 @@ import { Octicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import Alerta from '../components/Alerta';
+import * as Clipboard from 'expo-clipboard';
 
 export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly, logins }) {
     const [sistema, setSistema] = useState('');
@@ -170,6 +171,19 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                                 <MaterialIcons name="lock" size={16} color="#666" /> Senha:
                                             </Text>
                                             <Text style={[styles.value, { fontSize: fontSizeZoom, fontFamily: 'SourceSerif4-Regular' }]}>{senha}</Text>
+                                            {viewOnly && (
+                                                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                                    <TouchableOpacity style={styles.zoomButton} onPress={zoomSenha}>
+                                                        <FontAwesome name="search" size={18} color="white" />
+                                                        <Text style={styles.zoomText}>Zoom</Text>
+                                                    </TouchableOpacity>
+
+                                                    <TouchableOpacity style={styles.copiarButton} onPress={() => Clipboard.setString(senha)}>
+                                                        <FontAwesome name="copy" size={18} color="white" />
+                                                        <Text style={styles.copiarText}>Copiar</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                )}
                                         </View>
                                     </>
                                 ) : (
@@ -233,13 +247,6 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                     <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
                                         <FontAwesome name="key" size={18} color="white" />
                                         <Text style={styles.gerarSenhaText}>Gerar</Text>
-                                    </TouchableOpacity>
-                                )}
-
-                                {viewOnly && (
-                                    <TouchableOpacity style={styles.zoomButton} onPress={zoomSenha}>
-                                        <FontAwesome name="search" size={18} color="white" />
-                                        <Text style={styles.zoomText}>Zoom</Text>
                                     </TouchableOpacity>
                                 )}
                 
@@ -457,5 +464,20 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginLeft: 5,
         color: '#666',
+    },
+    copiarButton: {
+        backgroundColor: '#2E8B57',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        marginTop: 10,
+        alignSelf: 'flex-end',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 10,
+    },
+    copiarText: {
+        color: 'white',
+        marginLeft: 5,
     },
 });

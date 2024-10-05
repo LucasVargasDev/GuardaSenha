@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
 import ActionSheet from 'react-native-actions-sheet';
+import * as Clipboard from 'expo-clipboard';
 
 export default function HomeScreen() {
     const [logins, setLogins] = useState([]);
@@ -175,6 +176,15 @@ export default function HomeScreen() {
 
             <ActionSheet ref={actionSheetRef}>
                 <View style={styles.actionSheetContainer}>
+                <TouchableOpacity
+                    style={styles.actionOption}
+                    onPress={() => {
+                        actionSheetRef.current?.setModalVisible(false);
+                        Clipboard.setString(selectedLogin.senha); // Copiar senha para a área de transferência
+                    }}
+                >
+                    <Text style={styles.actionText}>Copiar Senha</Text>
+                </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
