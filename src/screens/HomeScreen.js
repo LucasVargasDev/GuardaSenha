@@ -186,7 +186,6 @@ export default function HomeScreen() {
                         <MaterialIcons name="content-copy" size={22} color="#4F4F4F" style={styles.iconLeft} />
                         <Text style={styles.actionText}>Copiar Senha</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
@@ -197,7 +196,6 @@ export default function HomeScreen() {
                         <MaterialIcons name="edit" size={22} color="#4F4F4F" style={styles.iconLeft} />
                         <Text style={styles.actionText}>Editar Conta</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
@@ -210,7 +208,6 @@ export default function HomeScreen() {
                     </TouchableOpacity>
                 </View>
             </ActionSheet>
-
         </View>
     );
 }

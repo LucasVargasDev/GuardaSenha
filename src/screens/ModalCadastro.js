@@ -137,7 +137,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     }
 
     return (
-        <Modal style={styles.container} visible={visible} animationType="slide" transparent={true}>
+        <Modal style={styles.container} visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
             <TouchableWithoutFeedback onPress={handleBackdropPress}>
                 <View style={styles.modalOverlay}>
                     <TouchableWithoutFeedback onPress={() => {}}>
