@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
 import { saveEncryptedData, getDecryptedData } from '../components/Storage';
+import MasterPassword from '../components/MasterPassword';
 import ActionSheet from 'react-native-actions-sheet';
 import * as Clipboard from 'expo-clipboard';
 
@@ -163,6 +164,8 @@ export default function HomeScreen() {
                 viewOnly={viewOnly}
                 logins={logins}
             />
+
+            <MasterPassword/>
 
             <Alerta
                 visible={alertaVisible}
