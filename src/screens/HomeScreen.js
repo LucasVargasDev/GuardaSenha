@@ -5,6 +5,7 @@ import ModalCadastro from './ModalCadastro';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
+import { saveEncryptedData, getDecryptedData } from '../components/Storage';
 import ActionSheet from 'react-native-actions-sheet';
 import * as Clipboard from 'expo-clipboard';
 
@@ -27,15 +28,14 @@ export default function HomeScreen() {
     useEffect(() => {
         const loadLogins = async () => {
             try {
-                const savedLogins = await AsyncStorage.getItem('logins');
-                if (savedLogins !== null) {
-                    setLogins(JSON.parse(savedLogins));
+                const savedLogins = await getDecryptedData('@guardaSenha:logins');
+                if (savedLogins) {
+                    setLogins(savedLogins);
                 }
             } catch (error) {
                 console.error("Erro ao carregar os logins", error);
             }
         };
-
         loadLogins();
     }, []);
 
@@ -45,7 +45,7 @@ export default function HomeScreen() {
 
     const saveLogins = async (newLogins) => {
         try {
-            await AsyncStorage.setItem('logins', JSON.stringify(newLogins));
+            await saveEncryptedData('@guardaSenha:logins', newLogins);
             setLogins(newLogins);
         } catch (error) {
             console.error("Erro ao salvar os logins", error);
