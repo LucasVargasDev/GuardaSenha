@@ -1,12 +1,40 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { saveEncryptedData, getDecryptedData } from './Storage';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 const ImportExport = ({ visible, onClose, actionType }) => {
+    const exportAccounts = async () => {
+        try {
+            const savedLogins = await getDecryptedData('@guardaSenha:logins');
+
+            console.log(savedLogins);
+            const accountsData = JSON.parse(savedLogins) || [];
+            const jsonContent = JSON.stringify(accountsData, null, 2);
+            const fileUri = FileSystem.documentDirectory + 'exported_accounts.json';
+            
+            //await FileSystem.writeAsStringAsync(fileUri, jsonContent);
+           // await Sharing.shareAsync(fileUri);
+            console.log('Exportação concluída:', fileUri);
+        } catch (error) {
+            console.error('Erro ao exportar contas:', error);
+        } finally {
+            onClose(); // Fecha o modal após a exportação
+        }
+    };
+
+    useEffect(() => {
+        if (visible && actionType === 'export') {
+            exportAccounts(); // Chama a função de exportação quando o modal é aberto para exportação
+        }
+    }, [visible, actionType]);
+
     const renderContent = () => {
-        if (actionType === 'import') {
+        if (actionType === 'export') {
+            return <Text>Exportando suas contas... Aguarde.</Text>;
+        } else if (actionType === 'import') {
             return <Text>Tentativa de import</Text>;
-        } else if (actionType === 'export') {
-            return <Text>Tentativa de export</Text>;
         }
         return null;
     };
