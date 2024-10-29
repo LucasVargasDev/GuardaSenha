@@ -8,31 +8,28 @@ const ImportExport = ({ visible, onClose, actionType }) => {
     const exportAccounts = async () => {
         try {
             const savedLogins = await getDecryptedData('@guardaSenha:logins');
-
-            console.log(savedLogins);
-            const accountsData = JSON.parse(savedLogins) || [];
-            const jsonContent = JSON.stringify(accountsData, null, 2);
+            const jsonContent = JSON.stringify(savedLogins, null, 2);
             const fileUri = FileSystem.documentDirectory + 'exported_accounts.json';
-            
-            //await FileSystem.writeAsStringAsync(fileUri, jsonContent);
-           // await Sharing.shareAsync(fileUri);
+
+            await FileSystem.writeAsStringAsync(fileUri, jsonContent);
+            await Sharing.shareAsync(fileUri);
             console.log('Exportação concluída:', fileUri);
         } catch (error) {
             console.error('Erro ao exportar contas:', error);
         } finally {
-            onClose(); // Fecha o modal após a exportação
+            onClose();
         }
     };
 
     useEffect(() => {
         if (visible && actionType === 'export') {
-            exportAccounts(); // Chama a função de exportação quando o modal é aberto para exportação
+            exportAccounts();
         }
     }, [visible, actionType]);
 
     const renderContent = () => {
         if (actionType === 'export') {
-            return <Text>Exportando suas contas... Aguarde.</Text>;
+            return <Text>Exportando suas contas, Aguarde.</Text>;
         } else if (actionType === 'import') {
             return <Text>Tentativa de import</Text>;
         }
