@@ -1,14 +1,22 @@
 import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { saveEncryptedData, getDecryptedData } from './Storage';
+import { saveEncryptedData, getEncryptedData, getDecryptedData } from './Storage';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 const ImportExport = ({ visible, onClose, actionType }) => {
     const exportAccounts = async () => {
         try {
-            const savedLogins = await getDecryptedData('@guardaSenha:logins');
-            const jsonContent = JSON.stringify(savedLogins, null, 2);
+            const savedSettings = await getDecryptedData('@guardaSenha:masterPassword');
+            const masterPasswordEnabled = savedSettings?.enabled || false;
+            const encryptedLogins = await getEncryptedData('@guardaSenha:logins');
+
+            const exportData = {
+                masterPassword: masterPasswordEnabled,
+                logins: encryptedLogins
+            };
+
+            const jsonContent = JSON.stringify(exportData, null, 2);
             const fileUri = FileSystem.documentDirectory + 'exported_accounts.json';
 
             await FileSystem.writeAsStringAsync(fileUri, jsonContent);
