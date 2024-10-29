@@ -1,29 +1,41 @@
 import React, { useEffect } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { saveEncryptedData, getEncryptedData, getDecryptedData } from './Storage';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { getEncryptedData, getDecryptedData } from './Storage';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 const ImportExport = ({ visible, onClose, actionType }) => {
-    const exportAccounts = async () => {
+    const exportAccounts = async (shouldShare) => {
         try {
             const savedSettings = await getDecryptedData('@guardaSenha:masterPassword');
             const masterPasswordEnabled = savedSettings?.enabled || false;
-            const encryptedLogins = await getEncryptedData('@guardaSenha:logins');
 
+            const encryptedLogins = await getEncryptedData('@guardaSenha:logins');
             const exportData = {
                 masterPassword: masterPasswordEnabled,
-                logins: encryptedLogins
+                logins: encryptedLogins,
             };
 
             const jsonContent = JSON.stringify(exportData, null, 2);
-            const fileUri = FileSystem.documentDirectory + 'exported_accounts.json';
+            const folderUri = `${FileSystem.documentDirectory}GuardaSenha/`;
+            const fileName = 'exported_accounts.json';
+            const fileUri = `${folderUri}${fileName}`;
 
+            await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
+            
             await FileSystem.writeAsStringAsync(fileUri, jsonContent);
-            await Sharing.shareAsync(fileUri);
-            console.log('Exportação concluída:', fileUri);
+            
+            if (shouldShare) {
+                await Sharing.shareAsync(fileUri, {
+                    UTI: 'public.json',
+                    dialogTitle: 'Salvar ou Compartilhar o Arquivo',
+                });
+            } else {
+                Alert.alert('Exportação concluída', `Arquivo salvo em: ${fileUri}`);
+            }
         } catch (error) {
             console.error('Erro ao exportar contas:', error);
+            Alert.alert('Erro', 'Erro ao exportar contas.');
         } finally {
             onClose();
         }
@@ -31,18 +43,16 @@ const ImportExport = ({ visible, onClose, actionType }) => {
 
     useEffect(() => {
         if (visible && actionType === 'export') {
-            exportAccounts();
+            Alert.alert(
+                "Exportar Contas",
+                "Deseja salvar localmente ou compartilhar o arquivo?",
+                [
+                    { text: "Salvar Localmente", onPress: () => exportAccounts(false) },
+                    { text: "Compartilhar", onPress: () => exportAccounts(true) }
+                ]
+            );
         }
     }, [visible, actionType]);
-
-    const renderContent = () => {
-        if (actionType === 'export') {
-            return <Text>Exportando suas contas, Aguarde.</Text>;
-        } else if (actionType === 'import') {
-            return <Text>Tentativa de import</Text>;
-        }
-        return null;
-    };
 
     return (
         <Modal
@@ -53,7 +63,7 @@ const ImportExport = ({ visible, onClose, actionType }) => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    {renderContent()}
+                    <Text>Exportando suas contas, aguarde.</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <Text style={styles.closeButtonText}>Fechar</Text>
                     </TouchableOpacity>
