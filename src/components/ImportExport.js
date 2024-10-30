@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { getEncryptedData, getDecryptedData, saveEncryptedData, decryptData } from './Storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
@@ -8,8 +9,9 @@ import * as Sharing from 'expo-sharing';
 const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
     const exportAccounts = async (shouldShare) => {
         try {
-            const savedSettings = await getDecryptedData('@guardaSenha:masterPassword');
-            const masterPasswordEnabled = savedSettings?.enabled || false;
+            const savedSettings = await AsyncStorage.getItem('@guardaSenha:masterPassword');
+            const masterPasswordData = savedSettings ? JSON.parse(savedSettings) : null;
+            const masterPasswordEnabled = masterPasswordData?.enabled || false;
 
             const encryptedLogins = await getEncryptedData('@guardaSenha:logins');
             const exportData = {
@@ -75,7 +77,11 @@ const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
                 Alert.alert('Importação cancelada', 'Nenhum arquivo foi importado.');
             }
         } catch (error) {
-            Alert.alert('Erro', 'Erro ao importar contas.');
+            if (error.message === 'DECRYPTION_FAILED') {
+                Alert.alert('Erro de Criptografia', 'Erro ao importar contas. Verifique sua Chave Mestre');
+            } else {
+                Alert.alert('Erro', 'Erro ao importar contas.');
+            }
         } finally {
             onClose();
         }

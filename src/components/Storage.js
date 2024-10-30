@@ -1,19 +1,36 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CryptoES from 'crypto-es'; // Importa o módulo principal
+import CryptoES from 'crypto-es';
 import { SECRET_KEY } from '../../config';
 
+async function getMasterPassword() {
+    const savedSettings = await AsyncStorage.getItem('@guardaSenha:masterPassword');
+    if (savedSettings !== null) {
+        const masterPasswordData = JSON.parse(savedSettings);
+        return masterPasswordData && masterPasswordData.enabled ? masterPasswordData.key : null;
+    }
+    return null;
+}
+
 async function encryptData(data) {
+    const masterPassword = await getMasterPassword();
+    const key = masterPassword ? `${SECRET_KEY}${masterPassword}` : SECRET_KEY;
     const jsonString = JSON.stringify(data);
-    const encryptedData = CryptoES.AES.encrypt(jsonString, SECRET_KEY).toString();
+    const encryptedData = CryptoES.AES.encrypt(jsonString, key).toString();
 
     return encryptedData;
 }
 
 export async function decryptData(encryptedData) {
-    const bytes = CryptoES.AES.decrypt(encryptedData, SECRET_KEY);
-    const decryptedData = bytes.toString(CryptoES.enc.Utf8);
-
-    return JSON.parse(decryptedData);
+    try {
+        const masterPassword = await getMasterPassword();
+        const key = masterPassword ? `${SECRET_KEY}${masterPassword}` : SECRET_KEY;
+        const bytes = CryptoES.AES.decrypt(encryptedData, key);
+        const decryptedData = bytes.toString(CryptoES.enc.Utf8);
+    
+        return JSON.parse(decryptedData);
+    } catch (e) {
+        throw new Error('DECRYPTION_FAILED')
+    }
 }
 
 export async function saveEncryptedData(key, data) {

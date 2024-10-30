@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { saveEncryptedData, getDecryptedData } from './Storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const MasterPassword = () => {
@@ -13,10 +14,11 @@ const MasterPassword = () => {
 
 	useEffect(() => {
 		const checkSettings = async () => {
-			const savedSettings = await getDecryptedData('@guardaSenha:masterPassword');
-			if (savedSettings) {
-				setEnabled(savedSettings.enabled);
-				setQuestionAsked(savedSettings.questionAsked);
+			const savedSettings = await AsyncStorage.getItem('@guardaSenha:masterPassword');
+			const masterPasswordData = savedSettings ? JSON.parse(savedSettings) : null;
+			if (masterPasswordData) {
+				setEnabled(masterPasswordData.enabled);
+				setQuestionAsked(masterPasswordData.questionAsked);
 			} else {
 				setVisible(true);
 			}
@@ -32,7 +34,7 @@ const MasterPassword = () => {
 					key: password,
 					questionAsked: true,
 				};
-				await saveEncryptedData('@guardaSenha:masterPassword', settings);
+				await AsyncStorage.setItem('@guardaSenha:masterPassword', JSON.stringify(settings));
 				setVisible(false);
 				setEnabled(true);
 				setQuestionAsked(true);
@@ -48,7 +50,7 @@ const MasterPassword = () => {
 			key: '',
 			questionAsked: true,
 		};
-		await saveEncryptedData('@guardaSenha:masterPassword', settings);
+		await AsyncStorage.setItem('@guardaSenha:masterPassword', JSON.stringify(settings));
 		setVisible(false);
 		setQuestionAsked(true);
 	};
