@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { getEncryptedData, getDecryptedData } from './Storage';
+import { getEncryptedData, getDecryptedData, saveEncryptedData, decryptData } from './Storage';
 import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 
-const ImportExport = ({ visible, onClose, actionType }) => {
+const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
     const exportAccounts = async (shouldShare) => {
         try {
             const savedSettings = await getDecryptedData('@guardaSenha:masterPassword');
@@ -17,12 +18,11 @@ const ImportExport = ({ visible, onClose, actionType }) => {
             };
 
             const jsonContent = JSON.stringify(exportData, null, 2);
-            const folderUri = `${FileSystem.documentDirectory}GuardaSenha/`;
+            const folderUri = `${FileSystem.documentDirectory}guardaSenha/`;
             const fileName = 'exported_accounts.json';
             const fileUri = `${folderUri}${fileName}`;
 
             await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
-            
             await FileSystem.writeAsStringAsync(fileUri, jsonContent);
             
             if (shouldShare) {
@@ -41,16 +41,60 @@ const ImportExport = ({ visible, onClose, actionType }) => {
         }
     };
 
+    const importAccounts = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: 'application/json',
+                copyToCacheDirectory: false,
+            });
+
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                const fileUri = result.assets[0].uri;
+                const tempUri = `${FileSystem.documentDirectory}temp_imported_accounts.json`;
+
+                await FileSystem.copyAsync({ from: fileUri, to: tempUri });
+
+                const fileContent = await FileSystem.readAsStringAsync(tempUri);
+
+                const importedData = JSON.parse(fileContent);
+
+                if (importedData.logins) {
+                    const decryptedLogins = await decryptData(importedData.logins);
+                    let savedLogins = await getDecryptedData('@guardaSenha:logins') || [];
+
+                    for (const login of decryptedLogins) {
+                        login.id = Date.now();
+                        savedLogins.push(login);
+                    }
+
+                    await saveEncryptedData('@guardaSenha:logins', savedLogins);
+                    loadLogins();
+                    Alert.alert('Importação concluída', 'Contas importadas com sucesso.');
+                }
+            } else {
+                Alert.alert('Importação cancelada', 'Nenhum arquivo foi importado.');
+            }
+        } catch (error) {
+            Alert.alert('Erro', 'Erro ao importar contas.');
+        } finally {
+            onClose();
+        }
+    };
+
     useEffect(() => {
-        if (visible && actionType === 'export') {
-            Alert.alert(
-                "Exportar Contas",
-                "Deseja salvar localmente ou compartilhar o arquivo?",
-                [
-                    { text: "Salvar Localmente", onPress: () => exportAccounts(false) },
-                    { text: "Compartilhar", onPress: () => exportAccounts(true) }
-                ]
-            );
+        if (visible) {
+            if (actionType === 'export') {
+                Alert.alert(
+                    "Exportar Contas",
+                    "Deseja salvar localmente ou compartilhar o arquivo?",
+                    [
+                        { text: "Salvar Localmente", onPress: () => exportAccounts(false) },
+                        { text: "Compartilhar", onPress: () => exportAccounts(true) }
+                    ]
+                );
+            } else if (actionType === 'import') {
+                importAccounts();
+            }
         }
     }, [visible, actionType]);
 
@@ -63,7 +107,7 @@ const ImportExport = ({ visible, onClose, actionType }) => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    <Text>Exportando suas contas, aguarde.</Text>
+                    <Text>Processando...</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <Text style={styles.closeButtonText}>Fechar</Text>
                     </TouchableOpacity>

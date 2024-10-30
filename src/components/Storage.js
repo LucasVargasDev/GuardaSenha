@@ -9,7 +9,7 @@ async function encryptData(data) {
     return encryptedData;
 }
 
-async function decryptData(encryptedData) {
+export async function decryptData(encryptedData) {
     const bytes = CryptoES.AES.decrypt(encryptedData, SECRET_KEY);
     const decryptedData = bytes.toString(CryptoES.enc.Utf8);
 

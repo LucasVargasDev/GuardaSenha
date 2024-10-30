@@ -29,17 +29,18 @@ export default function HomeScreen() {
         'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
     });
 
-    useEffect(() => {
-        const loadLogins = async () => {
-            try {
-                const savedLogins = await getDecryptedData('@guardaSenha:logins');
-                if (savedLogins) {
-                    setLogins(savedLogins);
-                }
-            } catch (error) {
-                console.error("Erro ao carregar os logins", error);
+    const loadLogins = async () => {
+        try {
+            const savedLogins = await getDecryptedData('@guardaSenha:logins');
+            if (savedLogins) {
+                setLogins(savedLogins);
             }
-        };
+        } catch (error) {
+            console.error("Erro ao carregar os logins", error);
+        }
+    };
+
+    useEffect(() => {
         loadLogins();
     }, []);
 
@@ -184,6 +185,7 @@ export default function HomeScreen() {
                 visible={importExportVisible}
                 onClose={() => setImportExportVisible(false)}
                 actionType={importExportAction}
+                loadLogins={loadLogins}
             />
 
             <Alerta
