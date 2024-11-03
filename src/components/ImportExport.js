@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { getEncryptedData, getDecryptedData, saveEncryptedData, decryptData } from './Storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 
 const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
-    const exportAccounts = async (shouldShare) => {
+    const exportAccounts = async () => {
         try {
             const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
             const masterPasswordEnabled = masterPasswordData?.enabled || false;
@@ -25,15 +24,12 @@ const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
 
             await FileSystem.makeDirectoryAsync(folderUri, { intermediates: true });
             await FileSystem.writeAsStringAsync(fileUri, jsonContent);
-            
-            if (shouldShare) {
-                await Sharing.shareAsync(fileUri, {
-                    UTI: 'public.json',
-                    dialogTitle: 'Salvar ou Compartilhar o Arquivo',
-                });
-            } else {
-                Alert.alert('Exportação concluída', `Arquivo salvo em: ${fileUri}`);
-            }
+
+
+            await Sharing.shareAsync(fileUri, {
+                UTI: 'public.json',
+                dialogTitle: 'Compartilhar o Arquivo',
+            });
         } catch (error) {
             console.error('Erro ao exportar contas:', error);
             Alert.alert('Erro', 'Erro ao exportar contas.');
@@ -56,7 +52,6 @@ const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
                 await FileSystem.copyAsync({ from: fileUri, to: tempUri });
 
                 const fileContent = await FileSystem.readAsStringAsync(tempUri);
-
                 const importedData = JSON.parse(fileContent);
 
                 if (importedData.logins) {
@@ -91,10 +86,9 @@ const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
             if (actionType === 'export') {
                 Alert.alert(
                     "Exportar Contas",
-                    "Deseja salvar localmente ou compartilhar o arquivo?",
+                    "A funcionalidade de salvar localmente está desabilitada. Deseja compartilhar o arquivo?",
                     [
-                        { text: "Salvar Localmente", onPress: () => exportAccounts(false) },
-                        { text: "Compartilhar", onPress: () => exportAccounts(true) }
+                        { text: "Compartilhar", onPress: exportAccounts }
                     ]
                 );
             } else if (actionType === 'import') {

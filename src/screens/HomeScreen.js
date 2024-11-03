@@ -20,6 +20,7 @@ export default function HomeScreen() {
     const [alertaTitle, setAlertaTitle] = useState('');
     const [alertaMessage, setAlertaMessage] = useState('');
     const [loginToDelete, setLoginToDelete] = useState(null);
+    const [masterPasswordModalVisible, setMasterPasswordModalVisible] = useState(false);
     const [importExportVisible, setImportExportVisible] = useState(false);
     const [importExportAction, setImportExportAction] = useState('');
     const accountSettingsSheetRef = useRef(null);
@@ -39,6 +40,17 @@ export default function HomeScreen() {
             console.error("Erro ao carregar os logins", error);
         }
     };
+
+    useEffect(() => {
+        const checkMasterPassword = async () => {
+            const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
+            if (!masterPasswordData) {
+                setMasterPasswordModalVisible(true);
+            }
+        };
+
+        checkMasterPassword();
+    }, []);
 
     useEffect(() => {
         loadLogins();
@@ -179,7 +191,12 @@ export default function HomeScreen() {
                 logins={logins}
             />
 
-            <MasterPassword/>
+            {masterPasswordModalVisible && (
+                <MasterPassword
+                    visible={masterPasswordModalVisible}
+                    onClose={() => setMasterPasswordModalVisible(false)}
+                />
+            )}
 
             <ImportExport
                 visible={importExportVisible}
@@ -254,6 +271,16 @@ export default function HomeScreen() {
                     >
                         <MaterialIcons name="file-download" size={22} color="#4F4F4F" style={styles.iconLeft} />
                         <Text style={styles.actionText}>Exportar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            appSettingsSheetRef.current?.setModalVisible(false);
+                            setMasterPasswordModalVisible(true);
+                        }}
+                    >
+                        <MaterialIcons name="lock" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Chave Mestre</Text>
                     </TouchableOpacity>
                 </View>
             </ActionSheet>
