@@ -3,10 +3,11 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet, TextInput } from 'reac
 import { saveEncryptedData, getDecryptedData } from './Storage';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const MasterPassword = ({ visible, onClose }) => {
+const MasterPassword = ({ visible, onClose, loadLogins }) => {
     const [password, setPassword] = useState('');
     const [questionAsked, setQuestionAsked] = useState(false);
     const [enabled, setEnabled] = useState(false);
+	const [currentPassword, setCurrentPassword] = useState('');
     const [isSettingPassword, setIsSettingPassword] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -15,10 +16,10 @@ const MasterPassword = ({ visible, onClose }) => {
             const loadMasterPassword = async () => {
                 const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
                 if (masterPasswordData) {
-                    const parsedData = JSON.parse(masterPasswordData);
-                    setPassword(parsedData.key || ''); // Carrega a chave se existir
-                    setEnabled(parsedData.enabled || false);
-                    setQuestionAsked(parsedData.questionAsked || false);
+                    setPassword(masterPasswordData.key || '');
+                    setEnabled(masterPasswordData.enabled || false);
+                    setQuestionAsked(masterPasswordData.questionAsked || false);
+					setCurrentPassword(masterPasswordData.key || '');
                 }
             };
             loadMasterPassword();
@@ -26,6 +27,8 @@ const MasterPassword = ({ visible, onClose }) => {
     }, [visible]);
 
     const handleConfirm = async () => {
+		const currentLogins = await getDecryptedData('@guardaSenha:logins');
+
         if (isSettingPassword) {
             if (password.length > 0) {
                 const settings = {
@@ -33,7 +36,13 @@ const MasterPassword = ({ visible, onClose }) => {
                     key: password,
                     questionAsked: true,
                 };
-                await saveEncryptedData('@guardaSenha:masterPassword', JSON.stringify(settings), false);
+                await saveEncryptedData('@guardaSenha:masterPassword', settings, false);
+
+				if(currentLogins != null) {
+					await saveEncryptedData('@guardaSenha:logins', currentLogins);
+					loadLogins();
+				}
+
                 onClose();
                 setEnabled(true);
                 setQuestionAsked(true);
@@ -44,12 +53,17 @@ const MasterPassword = ({ visible, onClose }) => {
     };
 
     const handleDeny = async () => {
+		const currentLogins = await getDecryptedData('@guardaSenha:logins');
         const settings = {
             enabled: false,
             key: '',
             questionAsked: true,
         };
         await saveEncryptedData('@guardaSenha:masterPassword', JSON.stringify(settings), false);
+		if(currentLogins != null) {
+			await saveEncryptedData('@guardaSenha:logins', currentLogins);
+			loadLogins();
+		}
         onClose();
         setQuestionAsked(true);
     };

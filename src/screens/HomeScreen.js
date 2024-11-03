@@ -195,6 +195,7 @@ export default function HomeScreen() {
                 <MasterPassword
                     visible={masterPasswordModalVisible}
                     onClose={() => setMasterPasswordModalVisible(false)}
+                    loadLogins={loadLogins}
                 />
             )}
 
