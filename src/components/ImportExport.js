@@ -9,8 +9,7 @@ import * as Sharing from 'expo-sharing';
 const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
     const exportAccounts = async (shouldShare) => {
         try {
-            const savedSettings = await AsyncStorage.getItem('@guardaSenha:masterPassword');
-            const masterPasswordData = savedSettings ? JSON.parse(savedSettings) : null;
+            const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
             const masterPasswordEnabled = masterPasswordData?.enabled || false;
 
             const encryptedLogins = await getEncryptedData('@guardaSenha:logins');

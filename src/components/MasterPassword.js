@@ -14,8 +14,7 @@ const MasterPassword = () => {
 
 	useEffect(() => {
 		const checkSettings = async () => {
-			const savedSettings = await AsyncStorage.getItem('@guardaSenha:masterPassword');
-			const masterPasswordData = savedSettings ? JSON.parse(savedSettings) : null;
+			const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
 			if (masterPasswordData) {
 				setEnabled(masterPasswordData.enabled);
 				setQuestionAsked(masterPasswordData.questionAsked);
@@ -34,7 +33,7 @@ const MasterPassword = () => {
 					key: password,
 					questionAsked: true,
 				};
-				await AsyncStorage.setItem('@guardaSenha:masterPassword', JSON.stringify(settings));
+				await saveEncryptedData('@guardaSenha:masterPassword', JSON.stringify(settings), false);
 				setVisible(false);
 				setEnabled(true);
 				setQuestionAsked(true);
@@ -50,7 +49,7 @@ const MasterPassword = () => {
 			key: '',
 			questionAsked: true,
 		};
-		await AsyncStorage.setItem('@guardaSenha:masterPassword', JSON.stringify(settings));
+		await saveEncryptedData('@guardaSenha:masterPassword', JSON.stringify(settings), false);
 		setVisible(false);
 		setQuestionAsked(true);
 	};
