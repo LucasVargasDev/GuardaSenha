@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import ModalCadastro from './ModalCadastro';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font'; 
 import Alerta from '../components/Alerta'; 
 import { saveEncryptedData, getDecryptedData } from '../components/Storage';
 import MasterPassword from '../components/MasterPassword';
+import ImportExport from '../components/ImportExport';
 import ActionSheet from 'react-native-actions-sheet';
 import * as Clipboard from 'expo-clipboard';
 
@@ -20,23 +20,39 @@ export default function HomeScreen() {
     const [alertaTitle, setAlertaTitle] = useState('');
     const [alertaMessage, setAlertaMessage] = useState('');
     const [loginToDelete, setLoginToDelete] = useState(null);
-    const actionSheetRef = useRef(null);
+    const [masterPasswordModalVisible, setMasterPasswordModalVisible] = useState(false);
+    const [importExportVisible, setImportExportVisible] = useState(false);
+    const [importExportAction, setImportExportAction] = useState('');
+    const accountSettingsSheetRef = useRef(null);
+    const appSettingsSheetRef = useRef(null);
     const [fontsLoaded] = useFonts({
         'Shanti-Regular': require('../../assets/Shanti-Regular.ttf'),
         'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
     });
 
+    const loadLogins = async () => {
+        try {
+            const savedLogins = await getDecryptedData('@guardaSenha:logins');
+            if (savedLogins) {
+                setLogins(savedLogins);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar os logins", error);
+        }
+    };
+
     useEffect(() => {
-        const loadLogins = async () => {
-            try {
-                const savedLogins = await getDecryptedData('@guardaSenha:logins');
-                if (savedLogins) {
-                    setLogins(savedLogins);
-                }
-            } catch (error) {
-                console.error("Erro ao carregar os logins", error);
+        const checkMasterPassword = async () => {
+            const masterPasswordData = await getDecryptedData('@guardaSenha:masterPassword', false);
+            if (!masterPasswordData) {
+                setMasterPasswordModalVisible(true);
             }
         };
+
+        checkMasterPassword();
+    }, []);
+
+    useEffect(() => {
         loadLogins();
     }, []);
 
@@ -68,6 +84,11 @@ export default function HomeScreen() {
         saveLogins(newLogins);
     };
 
+    const handleImportExport = (action) => {
+        setImportExportAction(action);
+        setImportExportVisible(true);
+    };
+
     const openModal = (login, isViewOnly = false) => {
         setSelectedLogin(login);
         setViewOnly(isViewOnly);
@@ -97,9 +118,9 @@ export default function HomeScreen() {
         handleAlertClose();
     };
 
-    const openActionSheet = (login) => {
+    const openAccountSettings = (login) => {
         setSelectedLogin(login);
-        actionSheetRef.current?.setModalVisible(true);
+        accountSettingsSheetRef.current?.setModalVisible(true);
     };
 
     const showUnavailableAlert = () => {
@@ -126,7 +147,7 @@ export default function HomeScreen() {
                 <TouchableOpacity onPress={() => openModal(item, true)}>
                     <MaterialIcons name="visibility" size={24} color="#4F4F4F" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => openActionSheet(item)} style={styles.optionIcon}>
+                <TouchableOpacity onPress={() => openAccountSettings(item)} style={styles.optionIcon}>
                     <Ionicons name="options-outline" size={24} color="#4F4F4F" />
                 </TouchableOpacity>
             </View>
@@ -141,7 +162,12 @@ export default function HomeScreen() {
                 <Text style={[styles.headerText, { fontFamily: 'Shanti-Regular' }]}>GuardaSenha</Text>
                 <View style={styles.iconContainer}>
                     <MaterialIcons name="search" size={24} color="#C8D4F1" onPress={() => showUnavailableAlert()}/>
-                    <MaterialIcons name="more-vert" size={24} color="#C8D4F1" onPress={() => showUnavailableAlert()}/>
+                    <MaterialIcons
+                        name="more-vert"
+                        size={24}
+                        color="#C8D4F1"
+                        onPress={() => appSettingsSheetRef.current?.setModalVisible(true)}
+                    />
                 </View>
             </View>
 
@@ -165,7 +191,20 @@ export default function HomeScreen() {
                 logins={logins}
             />
 
-            <MasterPassword/>
+            {masterPasswordModalVisible && (
+                <MasterPassword
+                    visible={masterPasswordModalVisible}
+                    onClose={() => setMasterPasswordModalVisible(false)}
+                    loadLogins={loadLogins}
+                />
+            )}
+
+            <ImportExport
+                visible={importExportVisible}
+                onClose={() => setImportExportVisible(false)}
+                actionType={importExportAction}
+                loadLogins={loadLogins}
+            />
 
             <Alerta
                 visible={alertaVisible}
@@ -177,12 +216,12 @@ export default function HomeScreen() {
                 isValidationError={isValidationError}
             />
 
-            <ActionSheet ref={actionSheetRef}>
+            <ActionSheet ref={accountSettingsSheetRef}>
                 <View style={styles.actionSheetContainer}>
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
-                            actionSheetRef.current?.setModalVisible(false);
+                            accountSettingsSheetRef.current?.setModalVisible(false);
                             Clipboard.setString(selectedLogin.senha); // Copiar senha para a área de transferência
                         }}
                     >
@@ -192,7 +231,7 @@ export default function HomeScreen() {
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
-                            actionSheetRef.current?.setModalVisible(false);
+                            accountSettingsSheetRef.current?.setModalVisible(false);
                             openModal(selectedLogin);
                         }}
                     >
@@ -202,12 +241,47 @@ export default function HomeScreen() {
                     <TouchableOpacity
                         style={styles.actionOption}
                         onPress={() => {
-                            actionSheetRef.current?.setModalVisible(false);
+                            accountSettingsSheetRef.current?.setModalVisible(false);
                             confirmDeleteLogin(selectedLogin.id);
                         }}
                     >
                         <MaterialIcons name="delete" size={22} color="#4F4F4F" style={styles.iconLeft} />
                         <Text style={styles.actionText}>Remover Conta</Text>
+                    </TouchableOpacity>
+                </View>
+            </ActionSheet>
+
+            <ActionSheet ref={appSettingsSheetRef}>
+                <View style={styles.actionSheetContainer}>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            appSettingsSheetRef.current?.setModalVisible(false);
+                            handleImportExport('import'); // Abre modal de importação
+                        }}
+                    >
+                        <MaterialIcons name="file-upload" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Importar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            appSettingsSheetRef.current?.setModalVisible(false);
+                            handleImportExport('export'); // Abre modal de exportação
+                        }}
+                    >
+                        <MaterialIcons name="file-download" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Exportar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionOption}
+                        onPress={() => {
+                            appSettingsSheetRef.current?.setModalVisible(false);
+                            setMasterPasswordModalVisible(true);
+                        }}
+                    >
+                        <MaterialIcons name="lock" size={22} color="#4F4F4F" style={styles.iconLeft} />
+                        <Text style={styles.actionText}>Chave Mestre</Text>
                     </TouchableOpacity>
                 </View>
             </ActionSheet>
