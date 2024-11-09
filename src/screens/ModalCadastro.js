@@ -5,6 +5,7 @@ import { Octicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 import Alerta from '../components/Alerta';
+import PasswordWizard from '../components/PasswordWizard';
 import * as Clipboard from 'expo-clipboard';
 
 export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selectedLogin, viewOnly, logins }) {
@@ -17,6 +18,8 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     const [alertaVisible, setAlertaVisible] = useState(false);
     const [alertaTitle, setAlertaTitle] = useState('');
     const [alertaMessage, setAlertaMessage] = useState('');
+    const [isPasswordWizardVisible, setPasswordWizardVisible] = useState(false);
+    const [generatedPassword, setGeneratedPassword] = useState('');
     const [fontsLoaded] = useFonts({
         'SourceSerif4-Regular': require('../../assets/SourceSerif4-Regular.ttf'),
     });
@@ -97,29 +100,14 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
         setPopupVisible(false);
     };
 
-    const gerarSenhaSegura = () => {
-        const letrasMaiusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const letrasMinusculas = 'abcdefghijklmnopqrstuvwxyz';
-        const numeros = '0123456789';
-        const caracteresEspeciais = '!@#$%^&*';
+    const openPasswordWizard = () => {
+        setPasswordWizardVisible(true);
+    };
 
-        let novaSenha = '';
-        novaSenha += letrasMaiusculas[Math.floor(Math.random() * letrasMaiusculas.length)];
-        novaSenha += numeros[Math.floor(Math.random() * numeros.length)];
-        novaSenha += caracteresEspeciais[Math.floor(Math.random() * caracteresEspeciais.length)];
-
-        const todosOsCaracteres = letrasMaiusculas + letrasMinusculas + numeros + caracteresEspeciais;
-        const tamanhoRestante = Math.floor(Math.random() * 3) + 3;
-
-        for (let i = 0; i < tamanhoRestante; i++) {
-            const indice = Math.floor(Math.random() * todosOsCaracteres.length);
-            novaSenha += todosOsCaracteres[indice];
-        }
-
-        novaSenha = novaSenha.split('').sort(() => 0.5 - Math.random()).join('');
-
-        setSenha(novaSenha);
-        validarSenha(novaSenha);
+    const handleGeneratePassword = (password) => {
+        setGeneratedPassword(password);
+        setSenha(password);
+        setPasswordWizardVisible(false);
     };
 
     const zoomSenha = () => {
@@ -244,12 +232,12 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                 )}
 
                                 {!selectedLogin && (
-                                    <TouchableOpacity style={styles.gerarSenhaButton} onPress={gerarSenhaSegura}>
+                                    <TouchableOpacity style={styles.gerarSenhaButton} onPress={openPasswordWizard}>
                                         <FontAwesome name="key" size={18} color="white" />
                                         <Text style={styles.gerarSenhaText}>Gerar</Text>
                                     </TouchableOpacity>
                                 )}
-                
+
                                 {!viewOnly && (
                                     <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
                                         <Text style={styles.saveButtonText}>Salvar</Text>
@@ -262,6 +250,12 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
                                     title={alertaTitle}
                                     message={alertaMessage}
                                     isValidationError={true}
+                                />
+
+                                <PasswordWizard
+                                    visible={isPasswordWizardVisible}
+                                    onClose={() => setPasswordWizardVisible(false)}
+                                    onGeneratePassword={handleGeneratePassword}
                                 />
                             </View>
                         </View>
