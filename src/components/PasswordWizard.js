@@ -2,12 +2,35 @@ import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, Switch, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 
+// Função para gerar senha com base nas configurações
+const generatePassword = (length, includeLowercase, includeUppercase, includeNumbers, includeSpecialChars) => {
+  const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+  const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const numbers = '0123456789';
+  const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+
+  let characters = '';
+  if (includeLowercase) characters += lowercaseChars;
+  if (includeUppercase) characters += uppercaseChars;
+  if (includeNumbers) characters += numbers;
+  if (includeSpecialChars) characters += specialChars;
+
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+
+  return password;
+};
+
 const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
-  const [passwordLength, setPasswordLength] = useState(8);
+  const [passwordLength, setPasswordLength] = useState(8); // Valor inicial 8
   const [includeLowercase, setIncludeLowercase] = useState(true);
   const [includeUppercase, setIncludeUppercase] = useState(false);
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [includeSpecialChars, setIncludeSpecialChars] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState('');
+
 
   const increaseLength = () => {
     if (passwordLength < 32) {
@@ -22,8 +45,9 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
   };
 
   const handleGeneratePassword = () => {
-    const options = { passwordLength, includeLowercase, includeUppercase, includeNumbers, includeSpecialChars };
-    handleGeneratePassword(options);
+    const password = generatePassword(passwordLength, includeLowercase, includeUppercase, includeNumbers, includeSpecialChars);
+    setGeneratedPassword(password);
+    onGeneratePassword(password);
     onClose();
   };
 
@@ -31,7 +55,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
     <Modal visible={visible} animationType="slide" transparent={true}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Gerar Senha Segura</Text>
+          <Text style={styles.title}>Configurar Senha Segura</Text>
 
           <Text style={styles.sectionTitle}>Comprimento da Senha</Text>
           <View style={styles.sliderContainer}>
@@ -77,6 +101,8 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
             <Text>Incluir Caracteres Especiais</Text>
             <Switch value={includeSpecialChars} onValueChange={setIncludeSpecialChars} />
           </View>
+
+          <Text style={styles.generatedPassword}>{generatedPassword}</Text>
 
           <TouchableOpacity style={styles.generateButton} onPress={handleGeneratePassword}>
             <Text style={styles.generateButtonText}>Gerar Senha</Text>
@@ -143,6 +169,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#007BFF',
+  },
+  generatedPassword: {
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
   },
   option: {
     flexDirection: 'row',
