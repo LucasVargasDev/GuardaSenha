@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, Switch, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 
-// Função para gerar senha com base nas configurações
 const generatePassword = (length, includeLowercase, includeUppercase, includeNumbers, includeSpecialChars) => {
   const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
   const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -43,7 +42,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
   };
 
   const decreaseLength = () => {
-    if (passwordLength > 4) {  // Limita o comprimento mínimo para 4
+    if (passwordLength > 4) {
       setPasswordLength(passwordLength - 1);
     }
   };
@@ -90,7 +89,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
 
             <Slider
               style={styles.slider}
-              minimumValue={4}  // Define o valor mínimo como 4
+              minimumValue={4}
               maximumValue={32}
               step={1}
               value={passwordLength}
