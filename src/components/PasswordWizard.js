@@ -96,7 +96,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
               onValueChange={(value) => setPasswordLength(Math.round(value))}
               minimumTrackTintColor="#007BFF"
               maximumTrackTintColor="#d3d3d3"
-              thumbTintColor="#007BFF"
+              thumbTintColor="#293A97"
             />
             
             <TouchableOpacity onPress={increaseLength} style={styles.buttonText}>
@@ -107,22 +107,38 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
 
           <View style={styles.option}>
             <Text>Incluir Letras Minúsculas</Text>
-            <Switch value={includeLowercase} onValueChange={(value) => handleSwitchChange('Lowercase', value)} />
+            <Switch 
+                value={includeLowercase}
+                onValueChange={ (value) => handleSwitchChange('Lowercase', value) }
+                trackColor={ {true: 'rgba(41, 58, 185, 0.6)'} }
+                thumbColor={ includeLowercase ? '#293A97' : 'rgb(241, 243, 253)' } />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Letras Maiúsculas</Text>
-            <Switch value={includeUppercase} onValueChange={(value) => handleSwitchChange('Uppercase', value)} />
+            <Switch
+                value={includeUppercase}
+                onValueChange={(value) => handleSwitchChange('Uppercase', value)}
+                trackColor={ {true: 'rgba(41, 58, 185, 0.6)'} }
+                thumbColor={ includeUppercase ? '#293A97' : 'rgb(241, 243, 253)' } />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Números</Text>
-            <Switch value={includeNumbers} onValueChange={(value) => handleSwitchChange('Numbers', value)} />
+            <Switch
+                value={includeNumbers}
+                onValueChange={(value) => handleSwitchChange('Numbers', value)}
+                trackColor={ {true: 'rgba(41, 58, 185, 0.6)'} }
+                thumbColor={ includeNumbers ? '#293A97' : 'rgb(241, 243, 253)' } />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Caracteres Especiais</Text>
-            <Switch value={includeSpecialChars} onValueChange={(value) => handleSwitchChange('SpecialChars', value)} />
+            <Switch
+                value={includeSpecialChars}
+                onValueChange={(value) => handleSwitchChange('SpecialChars', value)}
+                trackColor={ {true: 'rgba(41, 58, 185, 0.6)'} }
+                thumbColor={ includeSpecialChars ? '#293A97' : 'rgb(241, 243, 253)' } />
           </View>
 
           <TouchableOpacity style={styles.generateButton} onPress={handleGeneratePassword}>
@@ -183,13 +199,13 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#007BFF',
+    color: '#293A97',
   },
   sliderValue: {
     marginTop: 8,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#007BFF',
+    color: '#293A97',
   },
   generatedPassword: {
     marginTop: 10,
@@ -209,7 +225,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    backgroundColor: '#007BFF',
+    backgroundColor: '#293A97',
     borderRadius: 10,
     alignItems: 'center',
     width: '100%',
@@ -223,7 +239,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   closeButtonText: {
-    color: '#007BFF',
+    color: '#293A97',
     fontSize: 16,
   },
 });
