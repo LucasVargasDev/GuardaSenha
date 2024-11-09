@@ -84,13 +84,7 @@ const ImportExport = ({ visible, onClose, actionType, loadLogins }) => {
     useEffect(() => {
         if (visible) {
             if (actionType === 'export') {
-                Alert.alert(
-                    "Exportar Contas",
-                    "A funcionalidade de salvar localmente está desabilitada. Deseja compartilhar o arquivo?",
-                    [
-                        { text: "Compartilhar", onPress: exportAccounts }
-                    ]
-                );
+                exportAccounts();
             } else if (actionType === 'import') {
                 importAccounts();
             }
