@@ -29,7 +29,7 @@ const generatePassword = (length, includeLowercase, includeUppercase, includeNum
 };
 
 const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
-  const [passwordLength, setPasswordLength] = useState(8); // Valor inicial 8
+  const [passwordLength, setPasswordLength] = useState(8);
   const [includeLowercase, setIncludeLowercase] = useState(true);
   const [includeUppercase, setIncludeUppercase] = useState(false);
   const [includeNumbers, setIncludeNumbers] = useState(false);
@@ -43,7 +43,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
   };
 
   const decreaseLength = () => {
-    if (passwordLength > 1) {
+    if (passwordLength > 4) {  // Limita o comprimento mínimo para 4
       setPasswordLength(passwordLength - 1);
     }
   };
@@ -90,7 +90,7 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
 
             <Slider
               style={styles.slider}
-              minimumValue={1}
+              minimumValue={4}  // Define o valor mínimo como 4
               maximumValue={32}
               step={1}
               value={passwordLength}
