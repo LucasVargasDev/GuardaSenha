@@ -16,11 +16,16 @@ const generatePassword = (length, includeLowercase, includeUppercase, includeNum
   if (includeSpecialChars) characters += specialChars;
 
   let password = '';
-  for (let i = 0; i < length; i++) {
+  if (includeLowercase) password += lowercaseChars.charAt(Math.floor(Math.random() * lowercaseChars.length));
+  if (includeUppercase) password += uppercaseChars.charAt(Math.floor(Math.random() * uppercaseChars.length));
+  if (includeNumbers) password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+  if (includeSpecialChars) password += specialChars.charAt(Math.floor(Math.random() * specialChars.length));
+
+  for (let i = password.length; i < length; i++) {
     password += characters.charAt(Math.floor(Math.random() * characters.length));
   }
 
-  return password;
+  return password.split('').sort(() => Math.random() - 0.5).join('');
 };
 
 const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
@@ -30,7 +35,6 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
   const [includeNumbers, setIncludeNumbers] = useState(false);
   const [includeSpecialChars, setIncludeSpecialChars] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState('');
-
 
   const increaseLength = () => {
     if (passwordLength < 32) {
@@ -49,6 +53,26 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
     setGeneratedPassword(password);
     onGeneratePassword(password);
     onClose();
+  };
+
+  const handleSwitchChange = (type, value) => {
+    if (value === false) {
+      const activeSwitches = [
+        includeLowercase,
+        includeUppercase,
+        includeNumbers,
+        includeSpecialChars
+      ].filter(Boolean).length;
+  
+      if (activeSwitches === 1) {
+        return;
+      }
+    }
+
+    if (type === 'Lowercase') setIncludeLowercase(value);
+    if (type === 'Uppercase') setIncludeUppercase(value);
+    if (type === 'Numbers') setIncludeNumbers(value);
+    if (type === 'SpecialChars') setIncludeSpecialChars(value);
   };
 
   return (
@@ -84,25 +108,23 @@ const PasswordWizard = ({ visible, onClose, onGeneratePassword }) => {
 
           <View style={styles.option}>
             <Text>Incluir Letras Minúsculas</Text>
-            <Switch value={includeLowercase} onValueChange={setIncludeLowercase} />
+            <Switch value={includeLowercase} onValueChange={(value) => handleSwitchChange('Lowercase', value)} />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Letras Maiúsculas</Text>
-            <Switch value={includeUppercase} onValueChange={setIncludeUppercase} />
+            <Switch value={includeUppercase} onValueChange={(value) => handleSwitchChange('Uppercase', value)} />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Números</Text>
-            <Switch value={includeNumbers} onValueChange={setIncludeNumbers} />
+            <Switch value={includeNumbers} onValueChange={(value) => handleSwitchChange('Numbers', value)} />
           </View>
 
           <View style={styles.option}>
             <Text>Incluir Caracteres Especiais</Text>
-            <Switch value={includeSpecialChars} onValueChange={setIncludeSpecialChars} />
+            <Switch value={includeSpecialChars} onValueChange={(value) => handleSwitchChange('SpecialChars', value)} />
           </View>
-
-          <Text style={styles.generatedPassword}>{generatedPassword}</Text>
 
           <TouchableOpacity style={styles.generateButton} onPress={handleGeneratePassword}>
             <Text style={styles.generateButtonText}>Gerar Senha</Text>

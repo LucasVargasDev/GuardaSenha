@@ -107,6 +107,7 @@ export default function ModalCadastro({ visible, onClose, onAdd, onEdit, selecte
     const handleGeneratePassword = (password) => {
         setGeneratedPassword(password);
         setSenha(password);
+        validarSenha(password);
         setPasswordWizardVisible(false);
     };
 
